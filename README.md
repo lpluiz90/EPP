@@ -1,8 +1,10 @@
 # EPP — Guia de Referência Completo
 
-**Exame de Pagamento de Pessoal do Exército Brasileiro**
-
 Guia completo de execução do ciclo de controle interno do pagamento de pessoal militar, desenvolvido para facilitar a execução pelas equipes escaladas.
+
+## 🔗 Acesse o site
+
+**[lpluiz90.github.io/EPP](https://lpluiz90.github.io/EPP/)**
 
 ## Sobre
 
