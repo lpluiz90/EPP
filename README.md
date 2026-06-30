@@ -1,10 +1,6 @@
-# EPP — Guia de Referência Completo
+# EPP — Guia de Referência
 
 Guia completo de execução do ciclo de controle interno do pagamento de pessoal militar, desenvolvido para facilitar a execução pelas equipes escaladas.
-
-## 🔗 Acesse o site
-
-**[lpluiz90.github.io/EPP](https://lpluiz90.github.io/EPP/)**
 
 ## Sobre
 
@@ -18,25 +14,3 @@ Este guia reúne, em formato interativo, todo o conteúdo necessário para a exe
 - Equipe EPP: composição e restrições
 - Controle de frequência
 - Modelo do Relatório EPP (Anexo B — EB90-N-02.001)
-
-## Base Legal
-
-| Norma | Assunto |
-|-------|---------|
-| EB90-N-02.001 (2ª Ed., 2024) | Norma principal do EPP |
-| EB 30-N-50.012 (2014) | Conferência da PHPM |
-| Port. GM-MD nº 1.113/2024 | Auxílio Pré-Escolar |
-| Decreto nº 12.117/2024 | Auxílio-Transporte |
-| MP nº 2.215-10/2001 | Remuneração militar |
-| Lei nº 13.954/2019 | Tabelas de remuneração |
-| Lei nº 6.880/1980 | Estatuto dos Militares |
-
-## Autoria
-
-**Escola de Comunicações do Exército — ESCOM**  
-Seção de Ensino de TIC, IA e Proteção Cibernética  
-Exército Brasileiro · 2026
-
-## Aviso Legal
-
-Toda a documentação utilizada na construção desta página é de acesso livre, uma vez que está publicada na internet para consulta pública. Este guia é apenas uma apresentação organizada para facilitar o entendimento e a execução do EPP pelas equipes escaladas, não substituindo as normas oficiais.
