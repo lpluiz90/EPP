@@ -269,7 +269,7 @@
     .sigla-cat-sep { grid-column:1/-1; background:var(--verde2); color:#fff; font-weight:700; font-size:.72rem; padding:.22rem .7rem; border-radius:3px; margin-top:.5rem; letter-spacing:.06em; text-transform:uppercase; }
     .sigla-cat-sep:first-child { margin-top:0; }
 
-    /* ── BASE LEGAL — CARDS ─────────────── */
+/* ── BASE LEGAL — CARDS ─────────────── */
     #legal-grid { display:flex; flex-direction:column; gap:.4rem; }
     .legal-card { background:#fff; border:1px solid var(--borda); border-radius:6px; padding:.65rem .9rem; }
     .legal-card .cat { display:inline-block; font-size:.68rem; background:#e6f0ea; border:1px solid #a8c8b0; color:var(--verde); border-radius:3px; padding:.05rem .35rem; font-weight:700; white-space:nowrap; }
@@ -408,7 +408,7 @@
     }
     .doc-row:first-child .doc-cell { border-top:2px solid #444;    box-shadow:-4px 0 14px rgba(0,0,0,.10), 4px 0 14px rgba(0,0,0,.10), 0 -6px 14px rgba(0,0,0,.10); }
     .doc-row:last-child  .doc-cell { border-bottom:2px solid #444; box-shadow:-4px 0 14px rgba(0,0,0,.10), 4px 0 14px rgba(0,0,0,.10), 0  6px 14px rgba(0,0,0,.10); }
-    .doc-row + .doc-row .doc-cell  { border-top:1px solid #ddd; }
+    #tab-relatorio .doc-row + .doc-row .doc-cell { border-top:1px solid #ddd; }
 
     .ann-slot { display:flex; flex-direction:column; gap:.5rem; align-items:stretch; flex:1; min-width:0; padding:.4rem 0 .4rem 1.2rem; }
     .ann-card {
@@ -486,6 +486,7 @@
       <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-principal"  type="button"><i class="fas fa-home"></i>Principal</button></li>
       <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-equipe"     type="button"><i class="fas fa-users"></i>Equipe EPP</button></li>
       <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-legal"      type="button"><i class="fas fa-gavel"></i>Base Legal</button></li>
+      <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-tcms"       type="button"><i class="fas fa-file-contract"></i>Termo de Sigilo</button></li>
       <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-frequencia" type="button"><i class="fas fa-calendar-alt"></i>Frequência</button></li>
       <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-siglas"     type="button"><i class="fas fa-font"></i>Siglas</button></li>
       <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-relatorio"  type="button"><i class="fas fa-file-signature"></i>Relatório Final</button></li>
@@ -1403,6 +1404,144 @@
 </div>
 </div><!-- /tab-frequencia -->
 
+<!-- ─────────── ABA: TERMO DE SIGILO (TCMS) ─────────────── -->
+<div class="tab-pane fade" id="tab-tcms" role="tabpanel">
+<div class="container-fluid px-4">
+
+  <div class="sec-title mt-3"><i class="fas fa-file-contract me-2"></i>Termo de Compromisso de Manutenção de Sigilo — TCMS <small class="fw-normal ms-2" style="font-size:.72rem;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:3px;padding:.05rem .4rem;letter-spacing:.03em;">Anexo D — EB90-N-02.001</small></div>
+
+  <!-- BOTÃO COPIAR -->
+  <div style="padding:.6rem 0 1rem;display:flex;align-items:flex-start;gap:1.2rem;flex-wrap:wrap;">
+    <div style="display:flex;flex-direction:column;align-items:flex-start;gap:.4rem;">
+      <button id="btn-copiar-tcms" onclick="copiarTCMS()" style="background:#c0152a;color:#fff;border:none;border-radius:7px;padding:.65rem 1.6rem;font-size:1rem;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;gap:.55rem;box-shadow:0 3px 10px rgba(192,21,42,.45);letter-spacing:.02em;">
+        <i class="fas fa-copy"></i> Copiar conteúdo para Word
+      </button>
+      <span id="tcms-copy-msg" style="display:none;font-size:.88rem;color:#2e7d32;font-weight:600;"><i class="fas fa-check-circle me-1"></i>Copiado! Cole no Word com Ctrl+V.</span>
+    </div>
+    <div style="background:#fff8e1;border-left:4px solid #f9a825;border-radius:5px;padding:.6rem .9rem;font-size:.84rem;color:#5a3e00;max-width:560px;line-height:1.55;">
+      <strong><i class="fas fa-exclamation-triangle me-1"></i>Atenção após colar no Word:</strong><br>
+      Ajuste margens, espaçamento e fonte conforme o padrão EB antes de imprimir.
+    </div>
+  </div>
+
+  <!-- DOCUMENTO ANOTADO -->
+  <div style="padding-bottom:1rem">
+  <div class="rel-wrap">
+  <div class="rel-doc">
+
+<!-- ══ ROW 1: Cabeçalho ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="background:#1a4a2e;color:#fff;text-align:center;border:2px solid #444;padding:.8rem 1.5rem;">
+    <div style="font-size:.68rem;letter-spacing:2px;opacity:.85">EXÉRCITO BRASILEIRO</div>
+    <div style="font-size:1rem;font-weight:800;letter-spacing:1px;margin:.3rem 0">TERMO DE COMPROMISSO DE MANUTENÇÃO DE SIGILO</div>
+    <div style="font-size:.72rem;opacity:.85;color:var(--dourado)">Anexo D — EB90-N-02.001 (2ª Edição, 2024)</div>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">Emitido um TCMS por membro da equipe EPP. Todos assinam <strong>antes</strong> de iniciar qualquer atividade do exame (Passo 2).</div>
+  </div>
+</div>
+
+<!-- ══ ROW 2: Parágrafo de abertura ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="text-align:justify;border-top:none">
+    <p style="margin:.4rem 0;line-height:1.9">Eu, <strong><u>NOME COMPLETO</u></strong>, brasileiro (a), CPF Nº <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>, filho (a) de <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> e <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>, Chefe (ou Membro) da Equipe de Exame de Pagamento da <u>&nbsp;&nbsp;(OM)&nbsp;&nbsp;</u>, no mês de <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> de <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>, realizado no(a) <u>&nbsp;&nbsp;(OM)&nbsp;&nbsp;</u>, declaro ter ciência inequívoca da legislação sobre o tratamento de informação classificada ou sob restrição de acesso cuja divulgação possa causar risco ou dano à segurança da sociedade ou do Estado, e me comprometo a guardar o sigilo necessário, nos termos da Lei nº 12.527, de 18 de novembro de 2011 e a:</p>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card"><strong>Nome completo</strong> — conforme documento de identidade, em caixa alta e sublinhado.</div>
+    <div class="ann-card"><strong>1ª OM</strong> — OM pagadora (a que realiza o EPP). <strong>2ª OM</strong> — pode ser diferente se o examinado pertencer a uma OMV.</div>
+    <div class="ann-card"><strong>Mês/Ano</strong> — mês de referência do pagamento examinado (não o mês de assinatura).</div>
+  </div>
+</div>
+
+<!-- ══ ROW 3: Alíneas a e b ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="text-align:justify;border-top:none">
+    <p style="margin:.3rem 0 .3rem 1.5rem;line-height:1.9">a) tratar as informações ou materiais classificados ou sob restrição de acesso que me forem fornecidos e preservar o seu sigilo, de acordo com a legislação vigente;</p>
+    <p style="margin:.3rem 0 .3rem 1.5rem;line-height:1.9">b) preservar o conteúdo das informações ou materiais classificados ou sob restrição de acesso, sem divulgá-los a terceiros;</p>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">Alíneas <strong>a</strong> e <strong>b</strong> — vedação à divulgação de contracheques, valores e dados funcionais dos militares examinados. Base: <strong>Lei nº 12.527/2011 (LAI)</strong>, Art. 25.</div>
+  </div>
+</div>
+
+<!-- ══ ROW 4: Alíneas c e d ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="text-align:justify;border-top:none">
+    <p style="margin:.3rem 0 .3rem 1.5rem;line-height:1.9">c) não praticar quaisquer atos que possam afetar o sigilo ou a integridade das informações ou materiais classificados ou sob restrição de acesso, ou dos materiais; e</p>
+    <p style="margin:.3rem 0 .15rem 1.5rem;line-height:1.9">d) não copiar ou reproduzir, por qualquer meio ou modo:</p>
+    <p style="margin:.15rem 0 .15rem 3rem;line-height:1.9">(1) informações classificadas ou sob restrição de acesso.</p>
+    <p style="margin:.15rem 0 .3rem 3rem;line-height:1.9">(2) informações relativas aos materiais de acesso restrito do Comando da <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u>, salvo autorização da autoridade competente.</p>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">Alínea <strong>c</strong> — proíbe qualquer ato que comprometa a integridade dos dados (alteração, destruição, perda).</div>
+    <div class="ann-card">Alínea <strong>d(2)</strong> — preencher com a denominação da OM: ex. <em>"Escola de Comunicações"</em>.</div>
+  </div>
+</div>
+
+<!-- ══ ROW 5: Fecho ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="text-align:justify;border-top:none">
+    <p style="margin:.4rem 0;line-height:1.9">Declaro estar de acordo com o presente Termo, assino na presença das testemunhas abaixo identificadas.</p>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">O TCMS <strong>não tem valor jurídico</strong> sem a assinatura das testemunhas. A assinatura deve ser de próprio punho ou digital qualificada.</div>
+  </div>
+</div>
+
+<!-- ══ ROW 6: Data ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-top:none">
+    <p style="margin:.6rem 0 1.2rem">Cidade, Estado, <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> de <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> de 20<u>&nbsp;&nbsp;</u>.</p>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">Data e local da <strong>assinatura</strong> — normalmente no dia da reunião de constituição da equipe EPP (Passo 2).</div>
+  </div>
+</div>
+
+<!-- ══ ROW 7: Assinatura do declarante ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="text-align:center;padding:1.2rem;border-top:none">
+    <div style="width:60%;margin:0 auto;">
+      <div style="border-bottom:1.5px solid #222;margin-bottom:.4rem">&nbsp;</div>
+      <div style="font-weight:700;font-size:.9rem">NOME COMPLETO – Posto ou Graduação</div>
+      <div style="font-size:.85rem">Idt nº <u>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</u> – Chefe (ou Membro)</div>
+    </div>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card"><strong>Chefe da Equipe</strong> — assina como "Chefe". <strong>Demais membros</strong> — assinam como "Membro". Cada pessoa da equipe assina seu próprio TCMS individual.</div>
+  </div>
+</div>
+
+<!-- ══ ROW 8: Testemunhas ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="padding:1rem 1.2rem 1.4rem;border-top:none">
+    <div style="font-weight:700;font-size:.88rem;margin-bottom:1rem">Testemunhas:</div>
+    <div style="display:flex;gap:2rem;flex-wrap:wrap;">
+      <div style="text-align:center;flex:1;min-width:160px">
+        <div style="border-bottom:1.5px solid #222;margin-bottom:.4rem">&nbsp;</div>
+        <div style="font-weight:700;font-size:.85rem">FULANO DE TAL – 1º Ten</div>
+        <div style="font-size:.82rem">Idt xxxxx – S1 ou Coordenador</div>
+      </div>
+      <div style="text-align:center;flex:1;min-width:160px">
+        <div style="border-bottom:1.5px solid #222;margin-bottom:.4rem">&nbsp;</div>
+        <div style="font-weight:700;font-size:.85rem">FULANO DE TAL – S Ten</div>
+        <div style="font-size:.82rem">Idt xxxxxx – Adj S1 ou Adj Coor</div>
+      </div>
+    </div>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">As <strong>duas testemunhas</strong> são obrigatórias e devem ser militares da OM não integrantes da equipe EPP — normalmente o Enc Set Pes e seu adjunto.</div>
+    <div class="ann-card ann-ex">Substituir "FULANO DE TAL – Posto", "Idt" e a função pelos dados reais de cada testemunha.</div>
+  </div>
+</div>
+
+  </div><!-- /rel-doc -->
+  </div><!-- /rel-wrap -->
+  </div><!-- /padding-bottom -->
+
+</div><!-- /container -->
+</div><!-- /tab-tcms -->
+
 <!-- ─────────── ABA: RELATÓRIO FINAL ─────────────────────── -->
 <div class="tab-pane fade" id="tab-relatorio" role="tabpanel">
 <div class="container-fluid px-4">
@@ -2000,6 +2139,49 @@
       c.checked = false;
       c.closest('tr').classList.remove('rub-done');
     });
+  }
+
+  async function copiarTCMS() {
+    var btn = document.getElementById('btn-copiar-tcms');
+    var msg = document.getElementById('tcms-copy-msg');
+    var cells = document.querySelectorAll('#tab-tcms .doc-cell');
+    var corpo = '';
+    cells.forEach(function(cell) {
+      var clone = cell.cloneNode(true);
+      clone.querySelectorAll('p').forEach(function(p) {
+        p.style.textAlign = 'justify';
+        p.style.fontFamily = "'Times New Roman', serif";
+        p.style.fontSize = '12pt';
+      });
+      corpo += clone.outerHTML;
+    });
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' +
+      '<div style="font-family:\'Times New Roman\',serif;font-size:12pt;color:#000;width:19cm;margin:0 auto;">' +
+      corpo + '</div></body></html>';
+    try {
+      if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+        var blob = new Blob([html], { type: 'text/html' });
+        await navigator.clipboard.write([new ClipboardItem({ 'text/html': blob })]);
+      } else {
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        document.body.appendChild(tmp);
+        var range = document.createRange();
+        range.selectNode(tmp);
+        window.getSelection().removeAllRanges();
+        window.getSelection().addRange(range);
+        document.execCommand('copy');
+        document.body.removeChild(tmp);
+      }
+      btn.style.background = '#2e7d32';
+      btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+      msg.style.display = 'inline';
+      setTimeout(function() {
+        btn.style.background = '#c0152a';
+        btn.innerHTML = '<i class="fas fa-copy"></i> Copiar conteúdo para Word';
+        msg.style.display = 'none';
+      }, 3500);
+    } catch(e) { alert('Não foi possível copiar. Tente selecionar o conteúdo manualmente.'); }
   }
 
   async function copiarRelatorioEPP() {
