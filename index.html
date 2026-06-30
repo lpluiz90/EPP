@@ -123,6 +123,15 @@
     .tbl-sm thead th { padding: .48rem .75rem; font-size: .81rem; }
     .tbl-sm tbody td { padding: .45rem .75rem; font-size: .81rem; }
     .row-group td { background: #f0f5f2 !important; font-weight: 700; font-size: .82rem; color: var(--verde); }
+    .row-group.rub-head-rem  td { background:#1a3a6b !important; color:#fff !important; }
+    .row-group.rub-head-cred td { background:#1a5c32 !important; color:#fff !important; }
+    .row-group.rub-head-deb  td { background:#8b1a1a !important; color:#fff !important; }
+    .tbl tbody tr.rub-rem  td   { background:#f0f4ff; }
+    .tbl tbody tr.rub-cred td   { background:#f0faf3; }
+    .tbl tbody tr.rub-deb  td   { background:#fff5f5; }
+    .tbl tbody tr.rub-rem:hover  td { background:#dce6ff !important; }
+    .tbl tbody tr.rub-cred:hover td { background:#d9f2e2 !important; }
+    .tbl tbody tr.rub-deb:hover  td { background:#ffe4e4 !important; }
 
     /* ── ALERT BOXES ────────────────────── */
     .box-info   { background:#e8f4ec; border-left:4px solid var(--verde2); border-radius:0 6px 6px 0; padding:.9rem 1.1rem; margin-bottom:1rem; }
@@ -2140,6 +2149,28 @@
       c.closest('tr').classList.remove('rub-done');
     });
   }
+
+  (function() {
+    document.addEventListener('DOMContentLoaded', function() {
+      var tipo = '';
+      document.querySelectorAll('#tbl-rubricas tbody tr').forEach(function(tr) {
+        if (tr.classList.contains('row-group')) {
+          var txt = tr.textContent.trim();
+          if (txt.indexOf('Vencimentos') !== -1 || txt.indexOf('Remuneratória') !== -1) {
+            tipo = 'rem'; tr.classList.add('rub-head-rem');
+          } else if (txt.indexOf('CRÉDITOS') === 0 || txt.indexOf('CREDITOS') === 0) {
+            tipo = 'cred'; tr.classList.add('rub-head-cred');
+          } else if (txt.indexOf('DÉBITOS') === 0 || txt.indexOf('DEBITOS') === 0) {
+            tipo = 'deb'; tr.classList.add('rub-head-deb');
+          }
+        } else {
+          if (tipo === 'rem') tr.classList.add('rub-rem');
+          else if (tipo === 'cred') tr.classList.add('rub-cred');
+          else if (tipo === 'deb') tr.classList.add('rub-deb');
+        }
+      });
+    });
+  })();
 
   async function copiarTCMS() {
     var btn = document.getElementById('btn-copiar-tcms');
