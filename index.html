@@ -1,0 +1,2060 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EPP — Exame de Pagamento de Pessoal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --verde:   #1a4a2e;
+      --verde2:  #2d6a47;
+      --verde3:  #4a8c61;
+      --dourado: #c5a028;
+      --fundo:   #f3f4f0;
+      --borda:   #ced4ca;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: var(--fundo);
+      color: #1c1c1c;
+      font-size: .93rem;
+      margin: 0;
+    }
+
+    /* ── HEADER ─────────────────────────── */
+    .pg-header {
+      background: linear-gradient(135deg, var(--verde) 0%, var(--verde2) 100%);
+      color: #fff;
+      padding: 2rem 2rem 0;
+      border-bottom: none;
+    }
+    .pg-header h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: .3rem; }
+    .pg-header p  { opacity: .85; margin: 0; font-size: .92rem; }
+
+    /* ── TABS ───────────────────────────── */
+    .hdr-tabs {
+      margin-top: 1.6rem;
+      border-bottom: none;
+      gap: 3px;
+    }
+    .hdr-tabs .nav-link {
+      color: rgba(255,255,255,.72);
+      background: rgba(255,255,255,.12);
+      border: none;
+      border-radius: 7px 7px 0 0;
+      padding: .52rem 1.25rem;
+      font-size: .88rem;
+      font-weight: 600;
+      transition: background .18s, color .18s;
+    }
+    .hdr-tabs .nav-link:hover {
+      color: #fff;
+      background: rgba(255,255,255,.22);
+    }
+    .hdr-tabs .nav-link.active {
+      color: var(--verde);
+      background: var(--fundo);
+      border-bottom: 3px solid var(--fundo);
+    }
+    .hdr-tabs .nav-link i { margin-right: .4rem; }
+
+    /* ── TAB CONTENT ────────────────────── */
+    .tab-content { background: var(--fundo); }
+    .tab-pane    { padding: 1.6rem 0 2rem; }
+
+    /* ── SIDEBAR ────────────────────────── */
+    .sidebar {
+      background: #fff;
+      border: 1px solid var(--borda);
+      border-radius: 8px;
+      padding: 1rem;
+      position: sticky;
+      top: 1rem;
+      max-height: 92vh;
+      overflow-y: auto;
+    }
+    .sidebar h6 { color: var(--verde); font-weight: 700; font-size: .84rem; }
+    .sidebar .nav-link {
+      color: var(--verde);
+      font-size: .82rem;
+      padding: .27rem .5rem;
+      border-radius: 4px;
+      line-height: 1.3;
+    }
+    .sidebar .nav-link:hover { background: #e8f0eb; }
+    .sidebar .nav-link.sub { padding-left: 1.1rem; font-size: .78rem; opacity: .82; }
+
+    /* ── SECTIONS ───────────────────────── */
+    .sec-title {
+      background: var(--verde);
+      color: #fff;
+      padding: .6rem 1.1rem;
+      border-radius: 6px 6px 0 0;
+      font-size: 1rem;
+      font-weight: 600;
+      border-left: 5px solid var(--dourado);
+      margin-bottom: 0;
+    }
+    .sec-body {
+      background: #fff;
+      border: 1px solid var(--borda);
+      border-top: none;
+      border-radius: 0 0 6px 6px;
+      padding: 1.4rem;
+      margin-bottom: 1.6rem;
+    }
+    .sec-sub {
+      font-size: .88rem;
+      font-weight: 700;
+      color: var(--verde2);
+      border-bottom: 2px solid var(--borda);
+      padding-bottom: .3rem;
+      margin: 1.3rem 0 .9rem;
+    }
+
+    /* ── TABLES ─────────────────────────── */
+    .tbl thead { background: var(--verde); color: #fff; }
+    .tbl thead th { padding: .62rem 1rem; border: none; font-weight: 600; font-size: .84rem; }
+    .tbl tbody td { padding: .6rem 1rem; border-color: var(--borda); vertical-align: top; font-size: .84rem; }
+    .tbl tbody tr:hover { background: #f0f6f2; }
+    .tbl-sm thead th { padding: .48rem .75rem; font-size: .81rem; }
+    .tbl-sm tbody td { padding: .45rem .75rem; font-size: .81rem; }
+    .row-group td { background: #f0f5f2 !important; font-weight: 700; font-size: .82rem; color: var(--verde); }
+
+    /* ── ALERT BOXES ────────────────────── */
+    .box-info   { background:#e8f4ec; border-left:4px solid var(--verde2); border-radius:0 6px 6px 0; padding:.9rem 1.1rem; margin-bottom:1rem; }
+    .box-warn   { background:#fff8e1; border-left:4px solid var(--dourado); border-radius:0 6px 6px 0; padding:.9rem 1.1rem; margin-bottom:1rem; }
+    .box-danger { background:#fdf0f0; border-left:4px solid #c0392b;        border-radius:0 6px 6px 0; padding:.9rem 1.1rem; margin-bottom:1rem; }
+    .box-info h6, .box-warn h6, .box-danger h6 { font-weight:700; margin-bottom:.35rem; font-size:.87rem; }
+    .box-info p, .box-warn p, .box-danger p,
+    .box-info ul, .box-warn ul, .box-danger ul { font-size:.84rem; margin-bottom:0; }
+
+    /* ── CARDS ──────────────────────────── */
+    .cmp-card {
+      border: 2px solid var(--borda);
+      border-radius: 8px;
+      padding: 1rem;
+      background: #f8fbf9;
+      height: 100%;
+    }
+    .cmp-card h6 { font-weight: 700; color: var(--verde); margin-bottom: .5rem; }
+    .cmp-card ul { font-size: .83rem; margin-bottom: 0; }
+    .cmp-arrow {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      color: var(--dourado);
+      font-weight: 700;
+    }
+    .doc-chip {
+      display: inline-block;
+      background: #fff;
+      border: 1px solid var(--borda);
+      border-radius: 4px;
+      padding: .14rem .45rem;
+      font-size: .78rem;
+      margin: .08rem .04rem;
+    }
+
+    /* ── TIMELINE ───────────────────────── */
+    .tl-month {
+      border-left: 4px solid var(--verde2);
+      padding-left: 1.4rem;
+      margin-bottom: 2rem;
+      position: relative;
+    }
+    .tl-month::before {
+      content: '';
+      position: absolute;
+      left: -9px; top: 5px;
+      width: 14px; height: 14px;
+      background: var(--dourado);
+      border-radius: 50%;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 2px var(--verde2);
+    }
+    .tl-head {
+      background: var(--verde);
+      color: #fff;
+      padding: .42rem 1rem;
+      border-radius: 4px;
+      font-weight: 700;
+      font-size: .9rem;
+      margin-bottom: .9rem;
+    }
+    .tl-step {
+      display: flex;
+      gap: .85rem;
+      margin-bottom: .6rem;
+      padding: .72rem .9rem;
+      background: #f8f9f7;
+      border: 1px solid var(--borda);
+      border-radius: 6px;
+    }
+    .tl-prazo {
+      background: var(--dourado);
+      color: #1a1a1a;
+      font-weight: 700;
+      font-size: .7rem;
+      padding: .2rem .5rem;
+      border-radius: 4px;
+      white-space: nowrap;
+      align-self: flex-start;
+      min-width: 108px;
+      text-align: center;
+    }
+    .tl-resp {
+      background: var(--verde3);
+      color: #fff;
+      font-size: .69rem;
+      font-weight: 600;
+      padding: .1rem .38rem;
+      border-radius: 3px;
+      white-space: nowrap;
+    }
+    .tl-step strong { font-size: .87rem; }
+    .tl-step p, .tl-step ul { font-size: .83rem; margin-bottom: 0; }
+    .tl-etapa1 { border-left: 3px solid var(--verde); }
+    .tl-etapa2 { border-left: 3px solid var(--dourado); }
+
+    /* ── SIGLAS ─────────────────────────── */
+    .sigla-card {
+      background: #fff;
+      border: 1px solid var(--borda);
+      border-radius: 6px;
+      padding: .42rem .85rem;
+      margin-bottom: .35rem;
+      line-height: 1.4;
+    }
+    .sigla-card .sigla { color: var(--verde); font-weight: 700; font-size: .88rem; }
+    .sigla-card .ext   { font-size: .84rem; color: #333; }
+    .sigla-card .cat   {
+      display: inline-block;
+      font-size: .68rem;
+      background: #e6f0ea;
+      border: 1px solid #a8c8b0;
+      color: var(--verde);
+      border-radius: 3px;
+      padding: .05rem .35rem;
+      font-weight: 700;
+      margin-top: .15rem;
+    }
+
+    /* ── SIGLAS — CORES POR CATEGORIA ────── */
+    .sigla-card.cat-rubrica      .cat { background:#e65c00; border-color:#e65c00; color:#fff; }
+    .sigla-card.cat-documento    .cat { background:#1565c0; border-color:#1565c0; color:#fff; }
+    .sigla-card.cat-funcao       .cat { background:#00695c; border-color:#00695c; color:#fff; }
+    .sigla-card.cat-orgao        .cat { background:#6a1b9a; border-color:#6a1b9a; color:#fff; }
+    .sigla-card.cat-organizacao  .cat { background:#283593; border-color:#283593; color:#fff; }
+    .sigla-card.cat-sistema      .cat { background:#00838f; border-color:#00838f; color:#fff; }
+    .sigla-card.cat-beneficio    .cat { background:#2e7d32; border-color:#2e7d32; color:#fff; }
+    .sigla-card.cat-atividade    .cat { background:#c62828; border-color:#c62828; color:#fff; }
+    .sigla-card.cat-qualificacao .cat { background:#3949ab; border-color:#3949ab; color:#fff; }
+    .sigla-card.cat-secao        .cat { background:#4e342e; border-color:#4e342e; color:#fff; }
+    .sigla-card.cat-situacao     .cat { background:#7b1fa2; border-color:#7b1fa2; color:#fff; }
+    .sigla-card.cat-referencia   .cat { background:#616161; border-color:#616161; color:#fff; }
+
+    /* ── SIGLAS — LEGENDA ─────────────────── */
+    .sigla-legenda { display:flex; flex-wrap:wrap; gap:.4rem .6rem; margin-bottom:1rem; }
+    .sigla-legenda span { display:inline-flex; align-items:center; gap:.3rem; font-size:.75rem; font-weight:600; border-radius:4px; padding:.2rem .55rem; color:#fff; }
+
+    /* ── SIGLAS — CONTROLES + GRID ────────── */
+    .sigla-controles { display:flex; flex-wrap:wrap; align-items:center; gap:.5rem; margin-bottom:.75rem; padding:.5rem .75rem; background:#f4f6f3; border-radius:6px; border:1px solid #cdd8c8; }
+    .sigla-controles label { font-size:.78rem; font-weight:600; color:var(--verde); margin:0; }
+    #sigla-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.35rem; }
+    .sigla-cat-sep { grid-column:1/-1; background:var(--verde2); color:#fff; font-weight:700; font-size:.72rem; padding:.22rem .7rem; border-radius:3px; margin-top:.5rem; letter-spacing:.06em; text-transform:uppercase; }
+    .sigla-cat-sep:first-child { margin-top:0; }
+
+    /* ── BASE LEGAL — CARDS ─────────────── */
+    #legal-grid { display:flex; flex-direction:column; gap:.4rem; }
+    .legal-card { background:#fff; border:1px solid var(--borda); border-radius:6px; padding:.65rem .9rem; }
+    .legal-card .cat { display:inline-block; font-size:.68rem; background:#e6f0ea; border:1px solid #a8c8b0; color:var(--verde); border-radius:3px; padding:.05rem .35rem; font-weight:700; white-space:nowrap; }
+    .legal-ementa { font-size:.81rem; color:#555; font-style:italic; margin:.3rem 0 .25rem; padding-left:.6rem; border-left:3px solid #ccc; }
+    .legal-relev  { font-size:.83rem; color:#333; line-height:1.55; margin-top:.25rem; }
+    .legal-cat-sep { background:var(--verde2); color:#fff; font-weight:700; font-size:.72rem; padding:.22rem .7rem; border-radius:3px; margin-top:.5rem; letter-spacing:.06em; text-transform:uppercase; }
+    /* cores por categoria */
+    .legal-card.lcat-epp         { background:#eef4ef; border-color:#1a4a2e; }
+    .legal-card.lcat-epp         .cat { background:#1a4a2e; border-color:#1a4a2e; color:#fff; }
+    .legal-card.lcat-pensao      { background:#e3f2fd; border-color:#1565c0; }
+    .legal-card.lcat-pensao      .cat { background:#1565c0; border-color:#1565c0; color:#fff; }
+    .legal-card.lcat-beneficio   { background:#fff3e0; border-color:#e65c00; }
+    .legal-card.lcat-beneficio   .cat { background:#e65c00; border-color:#e65c00; color:#fff; }
+    .legal-card.lcat-remuneracao { background:#ede7f6; border-color:#4527a0; }
+    .legal-card.lcat-remuneracao .cat { background:#4527a0; border-color:#4527a0; color:#fff; }
+    .legal-card.lcat-estatuto    { background:#efebe9; border-color:#4e342e; }
+    .legal-card.lcat-estatuto    .cat { background:#4e342e; border-color:#4e342e; color:#fff; }
+
+    /* ── FLOWCHART CUSTOMIZADO ──────────── */
+    .fc-outer { border:2px solid var(--borda); border-radius:10px; overflow:hidden; margin-bottom:.5rem; }
+    .fc-toolbar {
+      background:#f0f4f1; border-bottom:1px solid var(--borda);
+      padding:.55rem 1rem; display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+    }
+    .fc-toolbar strong { color:var(--verde); font-size:.87rem; }
+    .fc-toolbar button {
+      background:var(--verde); color:white; border:none; border-radius:5px;
+      padding:.3rem .75rem; font-size:.83rem; cursor:pointer; transition:background .15s;
+    }
+    .fc-toolbar button:hover { background:var(--verde2); }
+    .fc-toolbar .fc-zoom-box { display:flex; align-items:center; gap:.4rem; }
+    .fc-toolbar .fc-hint { font-size:.72rem; color:#888; border-left:1px solid #ccc; padding-left:.7rem; margin-left:auto; }
+
+    .fc-scroll { overflow:auto; max-height:680px; background:#e8ede9; padding:2rem; cursor:grab; }
+    .fc-scroll:active { cursor:grabbing; }
+    #fcBoard { width:100%; min-width:860px; display:block; }
+
+    /* Ovals */
+    .fc-oval {
+      display:inline-block; border-radius:40px;
+      padding:.65rem 2.4rem; font-weight:700; font-size:.92rem; text-align:center;
+    }
+    .fc-oval-s { background:var(--verde); color:#fff; border:3px solid var(--dourado); }
+    .fc-oval-e { background:#1a3a5c; color:#fff; border:3px solid var(--dourado); }
+
+    /* Arrows */
+    .fc-arr-v { text-align:center; font-size:2rem; color:var(--verde); font-weight:900; line-height:.85; padding-top:.25rem; padding-bottom:.25rem; }
+
+    /* Months row */
+    .fc-months { display:flex; align-items:flex-start; gap:0; width:100%; }
+
+    /* Month card */
+    .fc-month { flex:1 1 0; min-width:0; border-radius:12px; overflow:hidden; box-shadow:0 4px 20px rgba(0,0,0,.16); }
+    .fc-m-m  { border:2px solid #1a4a2e; }
+    .fc-m-m1 { border:2px solid #1a3a5c; }
+    .fc-m-m2 { border:2px solid #7a3a0a; }
+
+    .fc-month-hdr {
+      padding:1rem 1.2rem; color:white; font-weight:700;
+      font-size:.95rem; text-align:center; line-height:1.4;
+    }
+    .fc-m-m  .fc-month-hdr { background:linear-gradient(135deg,#1a4a2e,#2d6a47); }
+    .fc-m-m1 .fc-month-hdr { background:linear-gradient(135deg,#1a3a5c,#2d5a8c); }
+    .fc-m-m2 .fc-month-hdr { background:linear-gradient(135deg,#7a3a0a,#a85a20); }
+    .fc-month-hdr .fc-seq {
+      display:inline-block; background:rgba(255,255,255,.25); border-radius:20px;
+      font-size:.7rem; padding:.1rem .6rem; margin-bottom:.3rem; letter-spacing:.5px;
+    }
+
+    .fc-month-body { background:white; padding:1rem; display:flex; flex-direction:column; }
+
+    /* Step cards */
+    .fc-step {
+      background:#f7f9f8; border:1px solid #d5dbd6; border-radius:7px;
+      padding:.75rem .9rem; margin-bottom:.55rem;
+    }
+    .fc-step:last-child { margin-bottom:0; }
+    .fc-step-e1 { border-left:4px solid #1a4a2e; }
+    .fc-step-e2 { border-left:4px solid var(--dourado); }
+    .fc-step-ok  { background:#e8f5e9; border:1px solid #a5d6a7; border-left:4px solid #2e7d32; }
+    .fc-step-err { background:#fde8e8; border:1px solid #ef9a9a; border-left:4px solid #c62828; }
+
+    .fc-meta { display:flex; flex-wrap:wrap; gap:.3rem; margin-bottom:.35rem; }
+    .fc-date { background:var(--dourado); color:#1a1a1a; font-size:.68rem; font-weight:700; padding:.1rem .42rem; border-radius:3px; }
+    .fc-resp { background:var(--verde3); color:#fff; font-size:.68rem; font-weight:600; padding:.1rem .42rem; border-radius:3px; }
+    .fc-etag { font-size:.64rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#666; margin-bottom:.18rem; }
+    .fc-step-title { font-weight:700; font-size:.84rem; margin-bottom:.15rem; }
+    .fc-step-desc  { font-size:.81rem; color:#444; line-height:1.4; }
+    .fc-s-arr { text-align:center; color:#4a6a55; font-size:1.3rem; padding:.12rem 0; line-height:1; font-weight:900; }
+
+    /* Horizontal connector between months */
+    .fc-h-conn {
+      display:flex; flex-direction:column; align-items:center;
+      justify-content:center; min-width:80px; padding-top:120px;
+    }
+    .fc-conn-badge {
+      background:var(--dourado); border-radius:10px;
+      padding:.6rem .7rem; text-align:center;
+      box-shadow:0 3px 12px rgba(0,0,0,.28);
+      cursor:default; line-height:1.25;
+    }
+    .fc-conn-badge .fc-cb-arr { font-size:1.8rem; font-weight:900; color:#1a1a1a; line-height:1; }
+    .fc-conn-badge .fc-cb-lbl { display:block; font-size:.62rem; font-weight:800; color:#1a1a1a; letter-spacing:.6px; text-transform:uppercase; }
+
+    /* Decision diamond */
+    .fc-diamond-wrap { text-align:center; margin:.5rem 0 .3rem; }
+    .fc-diamond {
+      width:162px; height:81px;
+      background:linear-gradient(135deg,#1a3a5c,#2d5a8c);
+      clip-path:polygon(50% 0%,100% 50%,50% 100%,0% 50%);
+      display:inline-flex; align-items:center; justify-content:center;
+      color:white; font-size:.71rem; font-weight:700; text-align:center;
+    }
+    .fc-branches { display:flex; gap:.4rem; margin:.45rem 0 .2rem; }
+    .fc-branch { flex:1; text-align:center; }
+    .fc-blbl {
+      font-size:.69rem; font-weight:700; padding:.08rem .38rem;
+      border-radius:3px; display:inline-block; margin-bottom:.28rem;
+    }
+    .fc-sim { background:#c62828; color:white; }
+    .fc-nao { background:#2e7d32; color:white; }
+    .fc-merge { text-align:center; font-size:.72rem; color:#888; padding:.15rem 0; }
+
+    /* ── RELATÓRIO — LAYOUT ANOTADO ─────── */
+    .rel-wrap { display:block; padding-left:1.5rem; padding-right:1.5rem; margin:0 0 2rem; }
+    .rel-doc  { font-family:'Times New Roman',serif; font-size:.88rem; color:#111; width:100%; }
+    .rel-ann  { display:none; }
+
+    .doc-row  { display:flex; align-items:stretch; }
+    .doc-cell {
+      flex:0 0 210mm; width:210mm;
+      border-left:2px solid #444; border-right:2px solid #444;
+      padding:.65rem 1.2rem;
+      background:#fff;
+      box-shadow: -4px 0 14px rgba(0,0,0,.10), 4px 0 14px rgba(0,0,0,.10);
+    }
+    .doc-row:first-child .doc-cell { border-top:2px solid #444;    box-shadow:-4px 0 14px rgba(0,0,0,.10), 4px 0 14px rgba(0,0,0,.10), 0 -6px 14px rgba(0,0,0,.10); }
+    .doc-row:last-child  .doc-cell { border-bottom:2px solid #444; box-shadow:-4px 0 14px rgba(0,0,0,.10), 4px 0 14px rgba(0,0,0,.10), 0  6px 14px rgba(0,0,0,.10); }
+    .doc-row + .doc-row .doc-cell  { border-top:1px solid #ddd; }
+
+    .ann-slot { display:flex; flex-direction:column; gap:.5rem; align-items:stretch; flex:1; min-width:0; padding:.4rem 0 .4rem 1.2rem; }
+    .ann-card {
+      background:#fffdf0; border:1px solid #c8b830;
+      border-radius:5px; font-size:.85rem; font-style:italic;
+      padding:.5rem .75rem .5rem 1rem; line-height:1.6; position:relative;
+    }
+    .ann-card::before {
+      content:'←'; position:absolute; left:-.95rem; top:.35rem;
+      font-size:1.05rem; font-weight:900; color:var(--dourado);
+    }
+    .ann-num {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:1.3rem; height:1.3rem; border-radius:50%;
+      background:var(--dourado); color:#111; font-size:.65rem;
+      font-weight:900; font-style:normal; margin-right:.35rem; flex-shrink:0;
+    }
+    .ann-ex { background:#f0f5ff; border-color:#7090c0; }
+    .ann-ex::before { color:#2d5a8c; }
+    .doc-ref {
+      display:inline-flex; align-items:center; justify-content:center;
+      width:1.1rem; height:1.1rem; border-radius:50%;
+      background:var(--dourado); color:#111; font-size:.58rem;
+      font-weight:900; vertical-align:middle; margin-left:.15rem;
+      line-height:1; cursor:default;
+    }
+    /* ── LINKS DE NORMAS ─────────────────── */
+    .norm-link { color: #1a4a8c; font-weight: 700; text-decoration: none; }
+    .norm-link:hover { color: #0d2f70; text-decoration: underline; }
+
+    /* ── CHECKLIST DE RUBRICAS ──────────── */
+    .rub-chk-wrap { display:flex; align-items:flex-start; gap:.5rem; }
+    .rub-chk {
+      appearance:none; -webkit-appearance:none;
+      width:1.2rem; height:1.2rem; min-width:1.2rem;
+      border:2px solid var(--verde3); border-radius:3px;
+      background:#fff; cursor:pointer;
+      margin-top:.1rem; transition:background .15s, border-color .15s;
+      display:inline-block; position:relative;
+    }
+    .rub-chk:checked { background:var(--verde); border-color:var(--verde); }
+    .rub-chk:checked::after {
+      content:'✓'; position:absolute; top:-.05rem; left:.15rem;
+      font-size:.85rem; font-weight:900; color:#fff; line-height:1;
+    }
+    .rub-chk:hover:not(:checked) { border-color:var(--verde); background:#e8f5e9; }
+    tr.rub-done td { background:#e8f5e9 !important; }
+    .rub-done-badge {
+      display:none; font-size:.65rem; font-weight:700; color:#2e7d32;
+      background:#c8e6c9; border-radius:3px; padding:.05rem .3rem; margin-left:.3rem; vertical-align:middle;
+    }
+    .rub-done .rub-done-badge { display:inline; }
+    #rub-reset-btn { font-size:.78rem; }
+
+    /* ── PRINT ──────────────────────────── */
+    @media print {
+      .sidebar, .hdr-tabs { display: none; }
+      .pg-header, .sec-title, .tl-head { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════════════════════════════════════ -->
+<div class="pg-header">
+  <div class="container-fluid">
+    <p style="font-size:.73rem;letter-spacing:2px;text-transform:uppercase;opacity:.7;margin-bottom:.3rem">
+      Exército Brasileiro - Escola de Comunicações
+    </p>
+    <h1>Exame de Pagamento de Pessoal <span style="color:var(--dourado)">- EPP</span></h1>
+    <p>Guia completo de execução — ciclo de controle interno do pagamento de pessoal militar</p>
+
+    <!-- ABAS -->
+    <ul class="nav hdr-tabs mt-3" id="mainTabs" role="tablist">
+      <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tab-principal"  type="button"><i class="fas fa-home"></i>Principal</button></li>
+      <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-equipe"     type="button"><i class="fas fa-users"></i>Equipe EPP</button></li>
+      <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-legal"      type="button"><i class="fas fa-gavel"></i>Base Legal</button></li>
+      <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-frequencia" type="button"><i class="fas fa-calendar-alt"></i>Frequência</button></li>
+      <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-siglas"     type="button"><i class="fas fa-font"></i>Siglas</button></li>
+      <li class="nav-item"><button class="nav-link"        data-bs-toggle="tab" data-bs-target="#tab-relatorio"  type="button"><i class="fas fa-file-signature"></i>Relatório Final</button></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════ TAB CONTENT ═══════════════════════════════════════ -->
+<div class="tab-content">
+
+<!-- ─────────── ABA: PRINCIPAL ─────────────────────────────────── -->
+<div class="tab-pane fade show active" id="tab-principal" role="tabpanel">
+<div class="container-fluid">
+<div class="row g-4">
+
+  <!-- Conteúdo principal -->
+  <div class="col-12">
+
+    <!-- CONCEITO -->
+    <div id="conceito">
+      <div class="sec-title"><i class="fas fa-info-circle me-2"></i>Conceito e Finalidade</div>
+      <div class="sec-body">
+        <div class="row g-3">
+          <div class="col-md-8">
+            <p>O <strong>Exame de Pagamento de Pessoal (EPP)</strong> é uma atividade de <strong>controle interno obrigatória e mensal</strong> em todas as Organizações Militares (OM), com o objetivo de verificar a correção dos pagamentos realizados pelo <strong>SIPPES</strong> (Sistema Integrado de Pagamento de Pessoal e Encargos Sociais do Exército) / <strong>CPEx</strong> (Centro de Pagamento do Exército).</p>
+            <p class="mb-2">O EPP abrange três categorias de beneficiários:</p>
+            <div class="row g-2 mb-3">
+              <div class="col-4"><div class="cmp-card text-center py-2"><i class="fas fa-user-tie fa-lg mb-1" style="color:var(--verde)"></i><br><small><strong>Militares da Ativa</strong></small></div></div>
+              <div class="col-4"><div class="cmp-card text-center py-2"><i class="fas fa-user-shield fa-lg mb-1" style="color:var(--verde)"></i><br><small><strong>Militares Inativos</strong></small></div></div>
+              <div class="col-4"><div class="cmp-card text-center py-2"><i class="fas fa-users fa-lg mb-1" style="color:var(--verde)"></i><br><small><strong>Pensionistas</strong></small></div></div>
+            </div>
+            <p class="mb-2">O exame é composto por <strong>duas etapas distintas e complementares</strong>:</p>
+            <div class="row g-2">
+              <div class="col-md-6">
+                <div class="cmp-card">
+                  <h6><i class="fas fa-file-invoice-dollar me-1"></i>Etapa 1</h6>
+                  <p class="small text-center mb-1" style="color:var(--verde2)"><strong>Conferência dos Relatórios</strong></p>
+                  <p class="small mb-0">Confronto dos <strong>relatórios de lançamentos do FAP</strong> com os <strong>Boletins Internos (BI) e aditamentos</strong> de pagamento publicados na OM — o que foi pago vs. o que foi autorizado.</p>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="cmp-card">
+                  <h6><i class="fas fa-search-dollar me-1"></i>Etapa 2</h6>
+                  <p class="small text-center mb-1" style="color:var(--verde2)"><strong>Exame dos Contracheques</strong></p>
+                  <p class="small mb-0">Análise individual de cada <strong>rubrica do contracheque</strong> dos militares selecionados, confrontada com os documentos físicos de cada benefício concedido.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-4" style="display:flex;flex-direction:column;gap:.75rem">
+            <div class="box-info" style="flex:1">
+              <h6><i class="fas fa-shield-alt me-1"></i>Características do EPP</h6>
+              <ul class="small ps-3 mb-0">
+                <li>Controle interno — responsabilidade do <strong>ARPP</strong></li>
+                <li>Periodicidade <strong>mensal</strong></li>
+                <li>Pode ser integralmente <strong>digital</strong> (Art. 34, EB90-N-02.001)</li>
+                <li>Assinatura digital válida aceita</li>
+                <li>Resultado obrigatoriamente publicado em <strong>BI</strong></li>
+              </ul>
+            </div>
+            <div class="box-warn" style="flex:1">
+              <h6><i class="fas fa-lock me-1"></i>Sigilo Obrigatório</h6>
+              <p class="small mb-0">Todos os membros da equipe devem assinar o <strong>TCMS</strong> (Termo de Compromisso de Manutenção de Sigilo — Anexo D — EB90-N-02.001) antes de iniciar qualquer atividade.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FLUXOGRAMA -->
+    <div id="fluxograma">
+      <div class="sec-title"><i class="fas fa-calendar-days me-2"></i>Calendário do EPP com os passos a serem seguidos</div>
+      <div class="sec-body">
+        <p class="text-muted" style="font-size:.83rem"><i class="fas fa-info-circle me-1"></i>Baseado no Calendário de Eventos — <strong>Anexo A da EB90-N-02.001, 2ª Ed. (2024)</strong>. O ciclo abrange três meses consecutivos. Use os botões de zoom e a barra de rolagem para navegar.</p>
+
+        <!-- ═══ FLUXOGRAMA CUSTOMIZADO ════════════════════════════════ -->
+        <div class="fc-outer">
+          <!-- Toolbar -->
+          <div class="fc-toolbar">
+            <strong><i class="fas fa-project-diagram me-1"></i>Ciclo EPP — 15 Passos</strong>
+            <div class="fc-zoom-box">
+              <button onclick="fcZ(-0.2)" title="Reduzir"><i class="fas fa-search-minus"></i></button>
+              <span id="fcPct" style="font-weight:600;font-size:.82rem;min-width:40px;text-align:center">100%</span>
+              <button onclick="fcZ(0.2)" title="Ampliar"><i class="fas fa-search-plus"></i></button>
+              <button onclick="fcReset()" title="Tamanho original" style="padding:.3rem .6rem"><i class="fas fa-expand-arrows-alt"></i></button>
+            </div>
+          </div>
+
+          <!-- Área com scroll -->
+          <div class="fc-scroll" id="fcScroll">
+            <div id="fcBoard">
+
+              <!-- START -->
+              <div style="padding-left:18px;margin-bottom:2px">
+                <div class="fc-oval fc-oval-s"><i class="fas fa-play-circle me-1"></i>INÍCIO DO CICLO EPP</div>
+              </div>
+              <div class="fc-arr-v">↓</div>
+
+              <!-- ─── TRÊS MESES ──────────────────────────────────────── -->
+              <div class="fc-months">
+
+                <!-- ── MÊS ANTERIOR ─────────────────── -->
+                <div class="fc-month fc-m-m">
+                  <div class="fc-month-hdr">
+                    <div class="fc-seq">1º do ciclo</div><br>
+                    📅 MÊS ANTERIOR<br>
+                    <small style="opacity:.82;font-size:.78rem">Mês do Pagamento</small>
+                  </div>
+                  <div class="fc-month-body">
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Até o dia 25</span><span class="fc-resp">ARPP</span></div>
+                      <div class="fc-step-title">Passo 1</div>
+                      <div class="fc-step-desc">Publicar em BI a composição da equipe EPP e a relação dos militares selecionados para exame</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Após publicação</span><span class="fc-resp">Equipe EPP</span></div>
+                      <div class="fc-step-title">Passo 2</div>
+                      <div class="fc-step-desc">Assinar o TCMS — Termo de Compromisso de Manutenção de Sigilo (Anexo D — EB90-N-02.001). <strong>Obrigatório antes de qualquer acesso a documentos.</strong></div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Último dia útil</span><span class="fc-resp">Enc Set Pes</span></div>
+                      <div class="fc-step-title">Passo 3</div>
+                      <div class="fc-step-desc">Disponibilizar relação do efetivo da OM e documentação completa dos selecionados (PHPM, SAT, folhas de alterações, ficha individual, ficha cadastro pré-escolar, declaração de auxílio-transporte)</div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Conector Mês Anterior → Mês de Verificação -->
+                <div class="fc-h-conn">
+                  <div class="fc-conn-badge">
+                    <div class="fc-cb-arr">▶</div>
+                    <span class="fc-cb-lbl">próx. mês</span>
+                  </div>
+                </div>
+
+                <!-- ── MÊS DE VERIFICAÇÃO ────────────── -->
+                <div class="fc-month fc-m-m1">
+                  <div class="fc-month-hdr">
+                    <div class="fc-seq">2º do ciclo</div><br>
+                    📋 MÊS DE VERIFICAÇÃO<br>
+                    <small style="opacity:.82;font-size:.78rem">Mês do Exame</small>
+                  </div>
+                  <div class="fc-month-body">
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Início do mês</span><span class="fc-resp">Equipe EPP</span></div>
+                      <div class="fc-step-title">Passo 4</div>
+                      <div class="fc-step-desc">Confrontar efetivo da OM com beneficiários da folha de pagamento do CPEx — identificar inclusões indevidas, exclusões tardias e alterações não lançadas</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step fc-step-e1">
+                      <div class="fc-etag">Etapa 1 — Conferência dos Relatórios</div>
+                      <div class="fc-meta"><span class="fc-date">Até o dia 24</span><span class="fc-resp">Equipe EPP</span></div>
+                      <div class="fc-step-title">Passo 5</div>
+                      <div class="fc-step-desc">Lançamentos do FAP versus BI e aditamentos de pagamento do mês anterior — conferir se tudo que foi pago tinha autorização publicada</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step fc-step-e2">
+                      <div class="fc-etag">Etapa 2 — Exame dos Contracheques</div>
+                      <div class="fc-meta"><span class="fc-date">Até o dia 24</span><span class="fc-resp">Equipe EPP</span></div>
+                      <div class="fc-step-title">Passo 6</div>
+                      <div class="fc-step-desc">Análise rubrica a rubrica dos contracheques dos selecionados, confrontado com documentos físicos (Índice Remissivo, DB, PHPM, SAT, declarações)</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <!-- DECISÃO -->
+                    <div class="fc-diamond-wrap">
+                      <div class="fc-diamond">Irregularidades<br>encontradas?</div>
+                    </div>
+                    <div class="fc-branches">
+                      <div class="fc-branch">
+                        <div><span class="fc-blbl fc-nao">NÃO</span></div>
+                        <div class="fc-step fc-step-ok">
+                          <div class="fc-step-desc"><strong>✔ Registrar conformidade</strong><br>no Relatório EPP</div>
+                        </div>
+                      </div>
+                      <div class="fc-branch">
+                        <div><span class="fc-blbl fc-sim">SIM</span></div>
+                        <div class="fc-step fc-step-err">
+                          <div class="fc-step-desc"><strong>✖ Registrar irregularidade</strong><br>e notificar o ARPP</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="fc-merge">↓ ambos os casos prosseguem</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Até o dia 25</span><span class="fc-resp">Enc Set Pes</span></div>
+                      <div class="fc-step-title">Passo 7</div>
+                      <div class="fc-step-desc">Verificar o cumprimento das determinações do despacho ARPP do ciclo anterior e registrar o resultado</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Até o dia 25</span><span class="fc-resp">Enc Set Pes</span></div>
+                      <div class="fc-step-title">Passo 8</div>
+                      <div class="fc-step-desc">Apresentar ao ARPP o Mapa de Controle do Efetivo (Anexo C — EB90-N-02.001) com todos os examinados e respectiva situação</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Até o dia 25</span><span class="fc-resp">Chefe EPP</span></div>
+                      <div class="fc-step-title">Passo 9</div>
+                      <div class="fc-step-desc">Apresentar o Relatório EPP (Anexo B — EB90-N-02.001) ao ARPP para que lance o despacho com determinações de correção</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Após Passo 9</span><span class="fc-resp">ARPP</span></div>
+                      <div class="fc-step-title">Passo 10</div>
+                      <div class="fc-step-desc">ARPP lança despacho no Relatório com determinações de correção, responsáveis e prazos</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">Último dia útil</span><span class="fc-resp">Enc Set Pes</span></div>
+                      <div class="fc-step-title">Passo 11</div>
+                      <div class="fc-step-desc">Publicar em BI o Relatório EPP (com despacho ARPP) e o Mapa de Controle do Efetivo</div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Conector Mês de Verificação → Mês Seguinte -->
+                <div class="fc-h-conn" style="padding-top:180px">
+                  <div class="fc-conn-badge" style="background:#a85a20">
+                    <div class="fc-cb-arr">▶</div>
+                    <span class="fc-cb-lbl">próx. mês</span>
+                  </div>
+                </div>
+
+                <!-- ── MÊS SEGUINTE ──────────────────── -->
+                <div class="fc-month fc-m-m2">
+                  <div class="fc-month-hdr">
+                    <div class="fc-seq">3º do ciclo</div><br>
+                    🔧 MÊS SEGUINTE<br>
+                    <small style="opacity:.82;font-size:.78rem">Correções e Encaminhamentos</small>
+                  </div>
+                  <div class="fc-month-body">
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">2º dia útil</span><span class="fc-resp">ARPP</span></div>
+                      <div class="fc-step-title">Passo 12</div>
+                      <div class="fc-step-desc">Remeter o Relatório EPP aos Comandantes das Organizações Militares Vinculadas (OMV) que tenham militares na folha examinada</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">2ª Corrida</span><span class="fc-resp">ARPP</span></div>
+                      <div class="fc-step-title">Passo 13</div>
+                      <div class="fc-step-desc">Determinar e acompanhar as <strong>correções de pagamento no SIPPES</strong> referentes a todas as irregularidades identificadas</div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">5º dia útil</span><span class="fc-resp">ARPP</span></div>
+                      <div class="fc-step-title">Passo 14</div>
+                      <div class="fc-step-desc">Remeter o Relatório EPP e o Mapa de Controle do Efetivo ao <strong>CGCFEx</strong></div>
+                    </div>
+                    <div class="fc-s-arr">↓</div>
+
+                    <div class="fc-step">
+                      <div class="fc-meta"><span class="fc-date">15º dia útil</span><span class="fc-resp">ARPP</span></div>
+                      <div class="fc-step-title">Passo 15</div>
+                      <div class="fc-step-desc">Publicar em BI o cumprimento (ou descumprimento justificado) das determinações do despacho ARPP do relatório anterior</div>
+                    </div>
+
+
+                  </div>
+                </div>
+
+              </div><!-- /fc-months -->
+
+              <!-- FIM DO CICLO -->
+              <div class="fc-arr-v" style="color:#7a3a0a;font-size:1.6rem">↓</div>
+              <div style="display:flex;justify-content:flex-end;padding-right:18px;margin-top:2px">
+                <div style="background:linear-gradient(135deg,#1a3a5c,#2d4f7c);color:#fff;border-radius:8px;padding:.72rem 1rem;text-align:center;font-weight:700;font-size:.83rem;border:2px solid var(--dourado);box-shadow:0 2px 8px rgba(0,0,0,.2);min-width:200px">
+                  <i class="fas fa-sync-alt me-1"></i>FIM DO CICLO<br>
+                  <small style="opacity:.85;font-size:.72rem;font-weight:500">Início do próximo ciclo EPP</small>
+                </div>
+              </div>
+
+            </div><!-- /fcBoard -->
+          </div><!-- /fc-scroll -->
+        </div><!-- /fc-outer -->
+      </div>
+    </div>
+
+    <!-- O QUE COMPARAR -->
+    <div id="comparacoes">
+      <div class="sec-title"><i class="fas fa-balance-scale me-2"></i>O que Comparar em Cada Etapa</div>
+      <div class="sec-body">
+
+        <div id="etapa1">
+          <p class="sec-sub">Etapa 1 — Conferência dos Relatórios <small class="text-muted fw-normal">(Art. 17, EB90-N-02.001)</small></p>
+          <div class="row g-3 align-items-center mb-3">
+            <div class="col-md-4">
+              <div class="cmp-card">
+                <h6><i class="fas fa-database me-2"></i>Relatórios do FAP</h6>
+                <p class="small mb-0">O que o sistema registrou como efetivamente <strong>pago e consignado</strong> no mês M: relatório de lançamentos de pagamento + relatório de consignações incluídas e excluídas.</p>
+              </div>
+            </div>
+            <div class="col-md-1 cmp-arrow">⟺</div>
+            <div class="col-md-7">
+              <div class="cmp-card">
+                <h6><i class="fas fa-newspaper me-2"></i>BI e Aditamentos</h6>
+                <p class="small mb-0">O que foi <strong>autorizado pelo comando</strong> da OM no mês M: Boletins Internos com atos de pagamento + aditamentos publicados.</p>
+              </div>
+            </div>
+          </div>
+          <div class="box-warn">
+            <p class="small mb-0"><strong><i class="fas fa-search me-1"></i>Sinaliza irregularidade:</strong> lançamentos no FAP sem BI correspondente; valores divergentes entre FAP e BI; exclusões de consignações não publicadas em BI; inclusões sem autorização publicada.</p>
+          </div>
+        </div>
+
+        <div id="etapa2" class="mt-4">
+          <p class="sec-sub">Etapa 2 — Exame dos Contracheques <small class="text-muted fw-normal">(Art. 18, EB90-N-02.001)</small></p>
+          <div class="row g-3 align-items-center mb-3">
+            <div class="col-md-4">
+              <div class="cmp-card">
+                <h6><i class="fas fa-receipt me-2"></i>Contracheque do militar</h6>
+                <p class="small mb-0">Emitido pelo <strong>CPEx via SIPPES</strong>. Contém todos os créditos (vencimentos, adicionais, benefícios) e débitos (pensões, consignações, descontos obrigatórios) do mês M.</p>
+              </div>
+            </div>
+            <div class="col-md-1 cmp-arrow">⟺</div>
+            <div class="col-md-7">
+              <div class="cmp-card">
+                <h6><i class="fas fa-folder-open me-2"></i>Documentos físicos de referência</h6>
+                <ul class="small mb-0">
+                  <li><strong>Folhas de alterações</strong> — histórico de eventos</li>
+                  <li><strong>Índice Remissivo</strong> (Anexo E — EB90-N-02.001) — guia de rubricas</li>
+                  <li><strong>Ficha individual</strong> do militar</li>
+                  <li>
+                    <strong>PHPM</strong> (EB 30-N-50.012) — conferida anualmente no <strong>mês do aniversário</strong> do militar.
+                    <ul class="mt-1 mb-0" style="padding-left:1.1rem">
+                      <li>
+                        Documentos do Anexo B da PHPM (EB 30-N-50.012)
+                        <details style="margin-top:.3rem">
+                          <summary style="cursor:pointer; display:inline-flex; align-items:center; gap:.3rem; list-style:none; user-select:none;">
+                            <span style="font-size:.72rem; border:1px solid var(--verde3); border-radius:3px; padding:.03rem .3rem; color:var(--verde3); font-weight:600;">▶ ver lista</span>
+                            <span style="font-size:.78rem; color:var(--verde2); font-weight:600;">Itens A–S do Anexo B da PHPM (EB 30-N-50.012)</span>
+                          </summary>
+                          <table style="margin:.4rem 0 .1rem; border-collapse:collapse; font-size:.78rem; width:100%">
+                            <thead><tr style="background:#e8ede9"><th style="border:1px solid #aaa; padding:.15rem .35rem; width:1.5rem; text-align:center">Item</th><th style="border:1px solid #aaa; padding:.15rem .45rem">Documento</th></tr></thead>
+                            <tbody>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">A</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Declaração de Beneficiários (com nº e data de publicação em BI)</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">B</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Ata de inspeção de saúde e parecer técnico devidamente homologado, comprovando a invalidez do próprio e/ou dos filhos habilitáveis</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">C</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia do documento comprobatório do último posto ou graduação</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">D</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia da carteira de identidade (instituidor e beneficiários)</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">E</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia do comprovante de inscrição no CPF (instituidor e beneficiários) — quando não constar da identidade</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">F</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia da certidão de casamento, atual e anterior (se for o caso); Escritura Pública de Declaração de União Estável</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">G</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia da certidão de nascimento dos filhos habilitáveis (inclusive extramatrimoniais)</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">H</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia da petição e sentença da separação judicial ou do divórcio</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">I</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia da certidão de óbito da esposa e filhos habilitáveis</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">J</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia da certidão e folha do BI que publicou a averbação de tempo de serviço público e certidão de tempo de serviço privado</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">K</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Declaração da OM sobre o número total de contribuições mensais descontadas do militar que contribuía para a pensão militar correspondente a um ou dois postos ou graduações acima da que fizer jus</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">L</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Portaria e ficha de controle referentes a processos de transferência para a inatividade (reserva/reforma) e benefícios</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">M</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Termo de curatela, tutela ou guarda</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">N</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Cópia dos documentos comprobatórios de concessão dos benefícios de Remuneração do Grau Hierárquico Imediato, auxílio-invalidez e de isenção de imposto de renda</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">O</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Termo de opção de licença especial</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">P</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Termo de renúncia aos benefícios previstos na Lei nº 3.765/60</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">Q</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Registro do ato, pelo TCU, que ateste o julgamento da legalidade da concessão — no caso de reformados</td></tr>
+                              <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">R</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Decisão judicial sobre desconto de pensão alimentícia</td></tr>
+                              <tr><td style="border:1px solid #ccc; padding:.15rem .35rem; text-align:center; font-weight:700">S</td><td style="border:1px solid #ccc; padding:.15rem .45rem">Despachos em geral</td></tr>
+                            </tbody>
+                          </table>
+                        </details>
+                      </li>
+                    </ul>
+                  </li>
+                  <li><strong>SAT</strong> — cadastro e dependentes</li>
+                  <li><strong>Ficha cadastro pré-escolar</strong></li>
+                  <li><strong>Declaração de auxílio-transporte</strong></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="box-info">
+            <p class="small mb-0"><strong><i class="fas fa-lightbulb me-1"></i>Índice Remissivo (Anexo E — EB90-N-02.001):</strong> preenchido por cada militar, lista todas as rubricas e os eventos que as originaram, com valores de referência. É o ponto de partida de cada análise de contracheque.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RUBRICAS -->
+    <div id="rubricas">
+      <div class="sec-title"><i class="fas fa-clipboard-check me-2"></i>O que verificar por Rubrica do Contracheque</div>
+      <div class="sec-body">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <p class="text-muted mb-0" style="font-size:.83rem">Baseado no Índice Remissivo (Anexo E, EB90-N-02.001), na Portaria GM-MD nº 1.113/2024 (Aux. Pré-Escolar) e no Decreto nº 12.117/2024 (Aux.-Transporte).</p>
+          <button id="rub-reset-btn" class="btn btn-sm ms-3" onclick="rubReset()" title="Limpar todas as marcações" style="background:#c0152a;color:#fff;border:none;font-weight:600;"><i class="fas fa-undo me-1"></i>Limpar marcações</button>
+        </div>
+        <div class="table-responsive">
+        <table id="tbl-rubricas" class="table tbl table-hover mb-0">
+          <thead>
+            <tr>
+              <th style="width:18%">Rubrica</th>
+              <th style="width:22%">Documento de confronto</th>
+              <th style="width:40%">O que verificar</th>
+              <th style="width:20%">Norma</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row-group"><td colspan="4">CRÉDITOS — Vencimentos e Adicionais de Natureza Remuneratória</td></tr>
+            <tr>
+              <td><strong>Soldo</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)<br>Ato de promoção em BI</td>
+              <td><ul class="mb-0"><li>Valor corresponde ao posto/graduação atual</li><li>Data de vigência da promoção publicada em BI</li><li>Tabela de vencimentos vigente aplicada</li></ul></td>
+              <td>Lei 13.954/2019<br>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>Adicional Militar (AM)</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)</td>
+              <td><ul class="mb-0"><li>Percentual conforme o círculo hierárquico (oficiais / praças)</li><li>Calculado sobre o soldo vigente</li></ul></td>
+              <td>MP 2.215-10/2001<br>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>Ad. Compensação por Disponibilidade Militar (ACDM)</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)<br>Ato de concessão em BI</td>
+              <td><ul class="mb-0"><li>Percentual corresponde ao posto/graduação</li><li>Concessão publicada em BI ou aditamento</li><li>Data de início correta</li></ul></td>
+              <td>Lei 13.954/2019<br>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>Ad. de Habilitação Militar (AHM)</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)<br>BI de conclusão do curso</td>
+              <td><ul class="mb-0"><li>Percentual conforme o tipo de curso concluído</li><li>Conclusão do curso publicada em BI</li></ul></td>
+              <td>Lei 13.954/2019<br>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>Adicional de Permanência (AP)</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)<br>Ato de concessão em BI</td>
+              <td><ul class="mb-0"><li>Evento de concessão publicado em BI</li><li>Data de início e continuidade corretas</li></ul></td>
+              <td>Lei 13.954/2019</td>
+            </tr>
+            <tr>
+              <td><strong>Ad. Compensação Orgânica (ACO)</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)<br>Ato de designação em BI</td>
+              <td><ul class="mb-0"><li>Cargo/função que gera o direito publicado em BI</li><li>Percentual conforme o cargo</li></ul></td>
+              <td>Lei 13.954/2019</td>
+            </tr>
+            <tr>
+              <td><strong>Ad. de Representação</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)<br>Ato de designação em BI</td>
+              <td><ul class="mb-0"><li>Cargo que gera o direito publicado em BI</li><li>Percentual conforme posto e cargo</li></ul></td>
+              <td>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>Ad. de Localidade Especial (ALE)</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)<br>Tabela de localidades vigente</td>
+              <td><ul class="mb-0"><li>Guarnição consta na tabela de localidades especiais</li><li>Percentual correto para a localidade</li></ul></td>
+              <td>Anexo E — EB90-N-02.001</td>
+            </tr>
+
+            <tr class="row-group"><td colspan="4">CRÉDITOS — Benefícios e Assistências</td></tr>
+            <tr>
+              <td><strong>Auxílio Pré-Escolar</strong></td>
+              <td>Ficha cadastro pré-escolar<br>Declaração de Beneficiários</td>
+              <td>
+                <ul class="mb-0">
+                  <li>Dependente tem <strong>até 5 anos</strong> (ou laudo de junta de saúde se deficiente)</li>
+                  <li>Ficha cadastro com dados corretos e atualizados</li>
+                  <li>Cônjuge/companheiro militar ou servidor <strong>não</strong> recebe o mesmo benefício simultaneamente</li>
+                  <li>Militar não está em licença para tratar de interesse particular</li>
+                  <li>Cota-parte na faixa correta: até 5× VB→5% · 6–10×→10% · 11–15×→15% · 16–20×→20% · &gt;21×→25% sobre o valor-teto</li>
+                  <li>Não acumula modalidade direta (berçário da OM) com indireta</li>
+                </ul>
+              </td>
+              <td>Port. GM-MD 1.113/2024<br>Arts. 1º, 10, 11, 13</td>
+            </tr>
+            <tr>
+              <td><strong>Auxílio-Transporte</strong></td>
+              <td>Declaração de auxílio-transporte</td>
+              <td>
+                <ul class="mb-0">
+                  <li>Declaração arquivada com endereço, percurso e valor diário</li>
+                  <li>Declaração atualizada após mudança de endereço ou percurso</li>
+                  <li>Cálculo: <strong>tarifa de menor custo × 22 dias − 6% do soldo</strong></li>
+                  <li>Militar <strong>não</strong> usa transporte custeado pela União</li>
+                  <li>Despesa de transporte é <strong>superior</strong> ao desconto de 6% do soldo (se igual ou inferior, o benefício é zerado)</li>
+                </ul>
+              </td>
+              <td>Dec. 12.117/2024<br>Arts. 5º, 7º, 8º</td>
+            </tr>
+            <tr>
+              <td><strong>Salário-Família</strong></td>
+              <td>SAT<br>Índice Remissivo (Anexo E — EB90-N-02.001)</td>
+              <td><ul class="mb-0"><li>Dependentes que geram o direito estão registrados no SAT</li><li>Evento de inclusão/exclusão publicado em BI</li></ul></td>
+              <td>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>FUSEX / Dependente Econômico</strong></td>
+              <td>Declaração de Beneficiários<br>SAT</td>
+              <td><ul class="mb-0"><li>Dependentes econômicos coincidem com a Declaração de Beneficiários</li><li>Descontos proporcionais ao número de dependentes e faixa salarial</li></ul></td>
+              <td>Anexo E — EB90-N-02.001</td>
+            </tr>
+
+            <tr class="row-group"><td colspan="4">DÉBITOS — Pensões e Descontos</td></tr>
+            <tr>
+              <td><strong>Pensão Militar</strong></td>
+              <td>PHPM (EB 30-N-50.012)<br>Declaração de Beneficiários</td>
+              <td>
+                <ul class="mb-0">
+                  <li>PHPM conferida no <strong>mês do aniversário</strong> do militar (Art. 6º, EB 30-N-50.012)</li>
+                  <li>Documentos do Anexo B da PHPM (EB 30-N-50.012) presentes e válidos</li>
+                  <li>Declaração de Beneficiários (DB) atualizada e assinada</li>
+                  <li>Beneficiários no contracheque coincidem com os da DB arquivada</li>
+                </ul>
+              </td>
+              <td>EB 30-N-50.012<br>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>Pensão Judicial / Alimentícia</strong></td>
+              <td>Decisão judicial arquivada na OM<br>SAT</td>
+              <td><ul class="mb-0"><li>Percentual conforme a decisão judicial vigente</li><li>Destinatário correto</li><li>Cópia da decisão arquivada na Set Pes</li></ul></td>
+              <td>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>PNR — Pecúlio por Não-Reengajamento</strong></td>
+              <td>Índice Remissivo (Anexo E — EB90-N-02.001)<br>Ato de concessão</td>
+              <td><ul class="mb-0"><li>Evento de concessão publicado em BI</li><li>Prazo e valor do desconto compatíveis com o ato</li></ul></td>
+              <td>Anexo E — EB90-N-02.001</td>
+            </tr>
+            <tr>
+              <td><strong>Consignações em geral</strong></td>
+              <td>Relatório de consignações (FAP)<br>Autorização do militar</td>
+              <td><ul class="mb-0"><li>Cada consignação ativa tem autorização registrada</li><li>Valores e beneficiários (entidades) corretos</li><li>Exclusões publicadas em BI</li><li>Relatório de exclusões do sistema obtido e confrontado</li></ul></td>
+              <td>Art. 11º, EB90-N-02.001</td>
+            </tr>
+          </tbody>
+        </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center py-3" style="border-top:2px solid var(--borda);color:#999;font-size:.78rem">
+      <p class="mb-1"><strong>EPP — Guia de Referência Completo</strong></p>
+      <p class="mb-0">Exército Brasileiro<br>
+      Escola de Comunicações — ESCOM<br>
+      Seção de Ensino de TIC, IA e Prot Ciber</p>
+    </div>
+
+  </div><!-- /col main -->
+</div><!-- /row -->
+</div><!-- /container -->
+</div><!-- /tab-principal -->
+
+<!-- ─────────── ABA: BASE LEGAL ──────────────────────────────────── -->
+<div class="tab-pane fade" id="tab-legal" role="tabpanel">
+<div class="container-fluid px-4">
+  <div class="sec-title mt-3"><i class="fas fa-gavel me-2"></i>Base Legal <small class="fw-normal ms-2" style="font-size:.72rem;background:rgba(255,255,255,.18);color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:3px;padding:.05rem .4rem;letter-spacing:.03em;">Atlz em jul 2026</small></div>
+  <div class="sec-body">
+    <!-- legenda de categorias -->
+    <div class="sigla-legenda">
+      <span style="background:#1a4a2e">Processo EPP</span>
+      <span style="background:#1565c0">PHPM / Pensão</span>
+      <span style="background:#e65c00">Benefício</span>
+      <span style="background:#4527a0">Remuneração</span>
+      <span style="background:#4e342e">Estatuto</span>
+    </div>
+    <!-- controles -->
+    <div class="sigla-controles">
+      <label>Ordenar:</label>
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-outline-secondary active" id="lsort-imp" onclick="legalSort('imp')"><i class="fas fa-star me-1"></i>Importância</button>
+        <button class="btn btn-outline-secondary" id="lsort-az" onclick="legalSort('az')"><i class="fas fa-sort-alpha-down me-1"></i>A–Z</button>
+        <button class="btn btn-outline-secondary" id="lsort-cat" onclick="legalSort('cat')"><i class="fas fa-layer-group me-1"></i>Categoria</button>
+      </div>
+      <label class="ms-2">Filtrar:</label>
+      <select class="form-select form-select-sm" style="width:auto;min-width:170px;" id="lfiltro-cat" onchange="legalFilter(this.value)">
+        <option value="">Todas as categorias</option>
+        <option value="Processo EPP">Processo EPP</option>
+        <option value="PHPM / Pensão">PHPM / Pensão</option>
+        <option value="Benefício">Benefício</option>
+        <option value="Remuneração">Remuneração</option>
+        <option value="Estatuto">Estatuto</option>
+      </select>
+    </div>
+    <!-- grid de normas — ordenado por importância -->
+    <div id="legal-grid">
+      <div class="legal-card" data-norma="EB90-N-02.001" data-cat="Processo EPP" data-ordem="1">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+          <div>
+            <a class="norm-link" href="https://www.sgex.eb.mil.br/sg8/005_normas/01_normas_diversas/02_secretaria_de_economia_e_financas/port_n_263_sef_20ago2024.html" target="_blank"><strong>EB90-N-02.001</strong></a><span style="color:#444;font-size:.84rem"> — Normas Reguladoras do Exame de Pagamento de Pessoal</span>
+            <small class="text-muted d-block">2ª Edição, 2024</small>
+          </div>
+          <span class="cat">Processo EPP</span>
+        </div>
+        <div class="legal-relev mt-2"><strong>Norma principal</strong> — define todo o processo: equipe, ciclo completo (15 passos), calendário de eventos, documentos, prazos, relatórios e penalidades do EPP</div>
+      </div>
+      <div class="legal-card" data-norma="Lei nº 6.880/1980" data-cat="Estatuto" data-ordem="2">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+          <div>
+            <a class="norm-link" href="https://www.planalto.gov.br/ccivil_03/leis/l6880.htm" target="_blank"><strong>Lei nº 6.880/1980</strong></a><span style="color:#444;font-size:.84rem"> — Estatuto dos Militares</span>
+            <small class="text-muted d-block">9 dez 1980</small>
+          </div>
+          <span class="cat">Estatuto</span>
+        </div>
+        <div class="legal-relev mt-2">Define os direitos, deveres e a situação jurídica dos militares das FFAA. Define quem são os dependentes (Art. 50) — base legal para FUSEX, Salário-Família, Auxílio Pré-Escolar e Pensão Militar. Define situações que afetam a remuneração (licenças, afastamentos)</div>
+      </div>
+      <div class="legal-card" data-norma="MP nº 2.215-10/2001" data-cat="Remuneração" data-ordem="3">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+          <div>
+            <a class="norm-link" href="https://www.planalto.gov.br/ccivil_03/mpv/2215-10.htm" target="_blank"><strong>MP nº 2.215-10/2001</strong></a><span style="color:#444;font-size:.84rem"> — Reestruturação da remuneração dos militares das Forças Armadas</span>
+            <small class="text-muted d-block">31 ago 2001</small>
+          </div>
+          <span class="cat">Remuneração</span>
+        </div>
+        <div class="legal-relev mt-2">Define as verbas que compõem a remuneração militar: soldo, adicionais e indenizações. Base para verificação de todas as rubricas de crédito do contracheque</div>
+      </div>
+      <div class="legal-card" data-norma="Lei nº 13.954/2019" data-cat="Remuneração" data-ordem="4">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+          <div>
+            <a class="norm-link" href="https://www.planalto.gov.br/ccivil_03/_ato2019-2022/2019/lei/l13954.htm" target="_blank"><strong>Lei nº 13.954/2019</strong></a><span style="color:#444;font-size:.84rem"> — Reestruturação da remuneração dos militares das FFAA</span>
+            <small class="text-muted d-block">16 dez 2019</small>
+          </div>
+          <span class="cat">Remuneração</span>
+        </div>
+        <div class="legal-relev mt-2">Tabelas de soldo, adicionais (AM, ACDM, AHM, AP, ACO) e benefícios vigentes. O Valor-Base (VB) desta lei é usado para calcular a faixa da cota-parte do Auxílio Pré-Escolar</div>
+      </div>
+      <div class="legal-card" data-norma="EB 30-N-50.012" data-cat="PHPM / Pensão" data-ordem="5">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+          <div>
+            <a class="norm-link" href="https://www.sgex.eb.mil.br/sg8/005_normas/01_normas_diversas/04_departamento-geral_do_pessoal/port_n_175_dgp_12ago2014.html" target="_blank"><strong>EB 30-N-50.012</strong></a><span style="color:#444;font-size:.84rem"> — Normas para Conferência da PHPM, PHPC e PHREPMPC e da Declaração de Beneficiários</span>
+            <small class="text-muted d-block">Port. nº 175-DGP, 12 ago 2014</small>
+          </div>
+          <span class="cat">PHPM / Pensão</span>
+        </div>
+        <div class="legal-relev mt-2">Define como verificar a Pasta de Habilitação à Pensão Militar durante o Exame dos Contracheques: documentos exigidos (Anexo B da PHPM (EB 30-N-50.012)), conferência anual no mês do aniversário (Art. 6º) e atualização da Declaração de Beneficiários (Arts. 11–15)</div>
+      </div>
+      <div class="legal-card" data-norma="Port. GM-MD nº 1.113/2024" data-cat="Benefício" data-ordem="6">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+          <div>
+            <a class="norm-link" href="https://www.dap.eb.mil.br/images/pdf/SAS/Auxilios/Portaria%20GM-MD%201.113%20DE%2004%20MARO%202024.pdf" target="_blank"><strong>Port. GM-MD nº 1.113/2024</strong></a><span style="color:#444;font-size:.84rem"> — Assistência pré-escolar destinada aos dependentes dos militares das Forças Armadas</span>
+            <small class="text-muted d-block">DOU 07/03/2024 · vigor 01/04/2024</small>
+          </div>
+          <span class="cat">Benefício</span>
+        </div>
+        <div class="legal-relev mt-2">Regras de concessão (dependente até 5 anos — Art. 1º), cálculo da cota-parte por faixa salarial (Art. 13 + Anexo), vedações (acumulação entre cônjuges — Art. 10) e perda do benefício (Art. 11). Verificado no exame do contracheque da rubrica Auxílio Pré-Escolar</div>
+      </div>
+      <div class="legal-card" data-norma="Decreto nº 12.117/2024" data-cat="Benefício" data-ordem="7">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem">
+          <div>
+            <a class="norm-link" href="https://www.planalto.gov.br/ccivil_03/_ato2023-2026/2024/decreto/d12117.htm" target="_blank"><strong>Decreto nº 12.117/2024</strong></a><span style="color:#444;font-size:.84rem"> — Auxílio-transporte dos militares das Forças Armadas</span>
+            <small class="text-muted d-block">DOU 18/07/2024</small>
+          </div>
+          <span class="cat">Benefício</span>
+        </div>
+        <div class="legal-relev mt-2">Fórmula de cálculo (tarifa × 22 dias − 6% do soldo — Art. 5º), exigência de declaração pelo militar (Art. 8º) e vedações (uso de transporte custeado pela União — Art. 7º). Verificado na rubrica Auxílio-Transporte do contracheque</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title mt-4"><i class="fas fa-folder-open me-2"></i>Documentos do EPP</div>
+  <div class="sec-body">
+    <p class="sec-sub">Anexos oficiais da <a class="norm-link" href="https://www.sgex.eb.mil.br/sg8/005_normas/01_normas_diversas/02_secretaria_de_economia_e_financas/port_n_263_sef_20ago2024.html" target="_blank">EB90-N-02.001</a></p>
+    <div class="d-flex flex-wrap gap-2 mb-4">
+      <div style="flex:1;min-width:150px;max-width:220px"><div class="cmp-card text-center py-2 px-2"><div style="font-size:1.4rem;margin-bottom:.2rem">📋</div><strong style="font-size:.8rem">Anexo A</strong><br><small class="text-muted" style="font-size:.72rem">Calendário de Eventos — 15 passos com prazos e responsáveis</small></div></div>
+      <div style="flex:1;min-width:150px;max-width:220px"><div class="cmp-card text-center py-2 px-2"><div style="font-size:1.4rem;margin-bottom:.2rem">📊</div><strong style="font-size:.8rem">Anexo B</strong><br><small class="text-muted" style="font-size:.72rem">Relatório EPP — resultado do exame com duas seções e despacho do ARPP</small></div></div>
+      <div style="flex:1;min-width:150px;max-width:220px"><div class="cmp-card text-center py-2 px-2"><div style="font-size:1.4rem;margin-bottom:.2rem">🗺️</div><strong style="font-size:.8rem">Anexo C</strong><br><small class="text-muted" style="font-size:.72rem">Mapa de Controle do Efetivo — lista de todos os examinados e respectiva situação</small></div></div>
+      <div style="flex:1;min-width:150px;max-width:220px"><div class="cmp-card text-center py-2 px-2"><div style="font-size:1.4rem;margin-bottom:.2rem">🔏</div><strong style="font-size:.8rem">Anexo D</strong><br><small class="text-muted" style="font-size:.72rem">Termo de Compromisso de Manutenção de Sigilo (TCMS)</small></div></div>
+      <div style="flex:1;min-width:150px;max-width:220px"><div class="cmp-card text-center py-2 px-2"><div style="font-size:1.4rem;margin-bottom:.2rem">📑</div><strong style="font-size:.8rem">Anexo E</strong><br><small class="text-muted" style="font-size:.72rem">Índice Remissivo — tabela de todas as rubricas com critérios de verificação e referências normativas</small></div></div>
+    </div>
+
+    <p class="sec-sub">Documentos externos — disponibilizados pelo Enc Set Pes (Passo 3)</p>
+    <table class="table tbl tbl-sm mb-0">
+      <thead><tr><th>Documento</th><th>O que contém</th><th>Onde encontrar</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>PHPM</strong> — Pasta de Habilitação à Pensão Militar</td>
+          <td>
+            Documentos pessoais e dos beneficiários habilitáveis à pensão; Declaração de Beneficiários; certidões; FCPHP (EB 30-N-50.012)
+            <details style="margin-top:.4rem">
+              <summary style="cursor:pointer; display:inline-flex; align-items:center; gap:.35rem; font-size:.8rem; font-weight:600; color:var(--verde2); list-style:none; user-select:none;">
+                <span style="border:1px solid var(--verde3); border-radius:3px; padding:.05rem .35rem; color:var(--verde3); font-size:.75rem;">▶ ver lista</span>
+                Itens A–S do Anexo B da PHPM (EB 30-N-50.012)
+              </summary>
+              <table style="margin:.45rem 0 .1rem; border-collapse:collapse; font-size:.8rem; width:100%">
+                <thead><tr style="background:#e8ede9"><th style="border:1px solid #aaa; padding:.2rem .4rem; width:1.6rem; text-align:center">Item</th><th style="border:1px solid #aaa; padding:.2rem .5rem">Documento</th></tr></thead>
+                <tbody>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">A</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Declaração de Beneficiários (com nº e data de publicação em BI)</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">B</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Ata de inspeção de saúde e parecer técnico devidamente homologado, comprovando a invalidez do próprio e/ou dos filhos habilitáveis</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">C</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia do documento comprobatório do último posto ou graduação</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">D</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia da carteira de identidade (instituidor e beneficiários)</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">E</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia do comprovante de inscrição no CPF (instituidor e beneficiários) — quando não constar da identidade</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">F</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia da certidão de casamento, atual e anterior (se for o caso); Escritura Pública de Declaração de União Estável</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">G</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia da certidão de nascimento dos filhos habilitáveis (inclusive extramatrimoniais)</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">H</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia da petição e sentença da separação judicial ou do divórcio</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">I</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia da certidão de óbito da esposa e filhos habilitáveis</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">J</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia da certidão e folha do BI que publicou a averbação de tempo de serviço público e certidão de tempo de serviço privado</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">K</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Declaração da OM sobre o número total de contribuições mensais descontadas do militar que contribuía para a pensão militar correspondente a um ou dois postos ou graduações acima da que fizer jus</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">L</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Portaria e ficha de controle referentes a processos de transferência para a inatividade (reserva/reforma) e benefícios</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">M</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Termo de curatela, tutela ou guarda</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">N</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Cópia dos documentos comprobatórios de concessão dos benefícios de Remuneração do Grau Hierárquico Imediato, auxílio-invalidez e de isenção de imposto de renda</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">O</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Termo de opção de licença especial</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">P</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Termo de renúncia aos benefícios previstos na Lei nº 3.765/60</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">Q</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Registro do ato, pelo TCU, que ateste o julgamento da legalidade da concessão — no caso de reformados</td></tr>
+                  <tr style="background:#f8f8f8"><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">R</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Decisão judicial sobre desconto de pensão alimentícia</td></tr>
+                  <tr><td style="border:1px solid #ccc; padding:.2rem .4rem; text-align:center; font-weight:700">S</td><td style="border:1px solid #ccc; padding:.2rem .5rem">Despachos em geral</td></tr>
+                </tbody>
+              </table>
+            </details>
+          </td>
+          <td>Set Pes da OM</td>
+        </tr>
+        <tr><td><strong>SAT</strong> — Sistema de Acompanhamento de Talentos</td><td>Dados cadastrais, dependentes, cursos e histórico funcional do militar</td><td>Base corporativa EB</td></tr>
+        <tr><td><strong>Ficha individual do militar</strong></td><td>Dados extraídos da base corporativa do Exército — posto, cargo, situação atual</td><td>Base corporativa EB</td></tr>
+        <tr><td><strong>Folhas de alterações</strong></td><td>Histórico de eventos (promoções, transferências, concessões) publicados em BI</td><td>Set Pes da OM</td></tr>
+        <tr><td><strong>Declaração de Beneficiários (DB)</strong></td><td>Lista dos beneficiários habilitáveis à pensão — atualizada anualmente; arquivada na PHPM</td><td>Arquivada na PHPM</td></tr>
+        <tr><td><strong>Ficha cadastro pré-escolar</strong></td><td>Nome, CPF, data de nascimento do dependente e data de matrícula/cadastro</td><td>Set Pes da OM</td></tr>
+        <tr><td><strong>Declaração de auxílio-transporte</strong></td><td>Endereço residencial, percurso, modal e valor diário declarados pelo militar</td><td>Set Pes da OM</td></tr>
+        <tr><td><strong>Relatórios do FAP</strong></td><td>Lançamentos de pagamento e consignações do mês examinado gerados pelo sistema</td><td>Sistema FAP / SIPPES</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+</div><!-- /tab-legal -->
+
+<!-- ─────────── ABA: SIGLAS ──────────────────────────────────────── -->
+<div class="tab-pane fade" id="tab-siglas" role="tabpanel">
+<div class="container-fluid px-4">
+  <div class="sec-title mt-3"><i class="fas fa-font me-2"></i>Glossário de Siglas e Abreviaturas</div>
+  <div class="sec-body">
+    <div class="sigla-legenda">
+      <span style="background:#e65c00">Rubrica</span>
+      <span style="background:#1565c0">Documento</span>
+      <span style="background:#00695c">Função</span>
+      <span style="background:#6a1b9a">Órgão</span>
+      <span style="background:#283593">Organização</span>
+      <span style="background:#00838f">Sistema</span>
+      <span style="background:#2e7d32">Benefício</span>
+      <span style="background:#c62828">Atividade</span>
+      <span style="background:#3949ab">Qualificação</span>
+      <span style="background:#4e342e">Seção</span>
+      <span style="background:#7b1fa2">Situação</span>
+      <span style="background:#616161">Referência</span>
+    </div>
+    <!-- controles de ordenação e filtro -->
+    <div class="sigla-controles">
+      <label>Ordenar:</label>
+      <div class="btn-group btn-group-sm">
+        <button class="btn btn-outline-secondary active" id="sort-az" onclick="siglaSort('az')"><i class="fas fa-sort-alpha-down me-1"></i>A–Z</button>
+        <button class="btn btn-outline-secondary" id="sort-cat" onclick="siglaSort('cat')"><i class="fas fa-layer-group me-1"></i>Categoria</button>
+      </div>
+      <label class="ms-2">Filtrar:</label>
+      <select class="form-select form-select-sm" style="width:auto;min-width:170px;" id="filtro-cat" onchange="siglaFilter(this.value)">
+        <option value="">Todas as categorias</option>
+      </select>
+    </div>
+    <!-- grid de siglas (populado e ordenado por JS) -->
+    <div id="sigla-grid">
+      <div class="sigla-card"><span class="sigla">ACDM</span> — <span class="ext">Adicional de Compensação por Disponibilidade Militar</span><br><span class="cat">Rubrica</span></div>
+      <div class="sigla-card"><span class="sigla">ACO</span> — <span class="ext">Adicional de Compensação Orgânica</span><br><span class="cat">Rubrica</span></div>
+      <div class="sigla-card"><span class="sigla">AHM</span> — <span class="ext">Adicional de Habilitação Militar</span><br><span class="cat">Rubrica</span></div>
+      <div class="sigla-card"><span class="sigla">ALE</span> — <span class="ext">Adicional de Localidade Especial</span><br><span class="cat">Rubrica</span></div>
+      <div class="sigla-card"><span class="sigla">AM</span> — <span class="ext">Adicional Militar</span><br><span class="cat">Rubrica</span></div>
+      <div class="sigla-card"><span class="sigla">AP</span> — <span class="ext">Adicional de Permanência</span><br><span class="cat">Rubrica</span></div>
+      <div class="sigla-card"><span class="sigla">ARPP</span> — <span class="ext">Agente Responsável pelo Pagamento de Pessoal — o comandante/chefe/diretor da OM</span><br><span class="cat">Função</span></div>
+      <div class="sigla-card"><span class="sigla">BI</span> — <span class="ext">Boletim Interno — publicação oficial interna da OM onde são veiculados os atos administrativos</span><br><span class="cat">Documento</span></div>
+      <div class="sigla-card"><span class="sigla">CAS</span> — <span class="ext">Curso de Aperfeiçoamento de Sargentos</span><br><span class="cat">Qualificação</span></div>
+      <div class="sigla-card"><span class="sigla">CGCFEx</span> — <span class="ext">Centro de Gestão da Contabilidade Federal do Exército</span><br><span class="cat">Órgão</span></div>
+      <div class="sigla-card"><span class="sigla">Ch SVP</span> — <span class="ext">Chefe do Serviço de Verificação e Pagamento</span><br><span class="cat">Função</span></div>
+      <div class="sigla-card"><span class="sigla">Cmt</span> — <span class="ext">Comandante</span><br><span class="cat">Posto/Função</span></div>
+      <div class="sigla-card"><span class="sigla">Coor Eq Exm Pg</span> — <span class="ext">Coordenador da Equipe de Exame de Pagamento</span><br><span class="cat">Função</span></div>
+      <div class="sigla-card"><span class="sigla">CPEx</span> — <span class="ext">Centro de Pagamento do Exército — responsável por gerar e emitir os contracheques</span><br><span class="cat">Órgão</span></div>
+      <div class="sigla-card"><span class="sigla">DB</span> — <span class="ext">Declaração de Beneficiários — lista dos dependentes habilitáveis à pensão militar; arquivada na PHPM</span><br><span class="cat">Documento</span></div>
+      <div class="sigla-card"><span class="sigla">DGP</span> — <span class="ext">Departamento-Geral do Pessoal do Exército Brasileiro</span><br><span class="cat">Órgão</span></div>
+      <div class="sigla-card"><span class="sigla">EB</span> — <span class="ext">Exército Brasileiro</span><br><span class="cat">Organização</span></div>
+      <div class="sigla-card"><span class="sigla">Enc Set Pes</span> — <span class="ext">Encarregado da Seção de Pessoal da OM</span><br><span class="cat">Função</span></div>
+      <div class="sigla-card"><span class="sigla">EPP</span> — <span class="ext">Exame de Pagamento de Pessoal — atividade de controle interno mensal obrigatória</span><br><span class="cat">Atividade</span></div>
+      <div class="sigla-card"><span class="sigla">FAP</span> — <span class="ext">Folha de Apoio ao Pagamento — sistema/relatório de lançamentos do pagamento de pessoal</span><br><span class="cat">Sistema</span></div>
+      <div class="sigla-card"><span class="sigla">FCPHP</span> — <span class="ext">Ficha para Conferência da Pasta de Habilitação à Pensão — registro da conferência anual da PHPM</span><br><span class="cat">Documento</span></div>
+      <div class="sigla-card"><span class="sigla">FFAA</span> — <span class="ext">Forças Armadas (Marinha, Exército e Aeronáutica)</span><br><span class="cat">Organização</span></div>
+      <div class="sigla-card"><span class="sigla">FUSEX</span> — <span class="ext">Fundo de Saúde do Exército — benefício de assistência médico-hospitalar</span><br><span class="cat">Benefício</span></div>
+      <div class="sigla-card"><span class="sigla">GM-MD</span> — <span class="ext">Gabinete do Ministro da Defesa</span><br><span class="cat">Órgão</span></div>
+      <div class="sigla-card"><span class="sigla">OM</span> — <span class="ext">Organização Militar — unidade administrativa e operacional do Exército</span><br><span class="cat">Organização</span></div>
+      <div class="sigla-card"><span class="sigla">OMV</span> — <span class="ext">Organização Militar Vinculada — OM subordinada ou vinculada à OM pagadora</span><br><span class="cat">Organização</span></div>
+      <div class="sigla-card"><span class="sigla">OP</span> — <span class="ext">Órgão Pagador de Inativos e Pensionistas</span><br><span class="cat">Órgão</span></div>
+      <div class="sigla-card"><span class="sigla">PHPC</span> — <span class="ext">Pasta de Habilitação à Pensão Civil — equivalente à PHPM para servidores civis</span><br><span class="cat">Documento</span></div>
+      <div class="sigla-card"><span class="sigla">PHPM</span> — <span class="ext">Pasta de Habilitação à Pensão Militar — conjunto de documentos que habilita os dependentes à pensão</span><br><span class="cat">Documento</span></div>
+      <div class="sigla-card"><span class="sigla">PHREPMPC</span> — <span class="ext">Pasta de Habilitação à Reparação Econômica em Prestação Mensal Permanente e Continuada</span><br><span class="cat">Documento</span></div>
+      <div class="sigla-card"><span class="sigla">PNR</span> — <span class="ext">Pecúlio por Não-Reengajamento — benefício pago em prestações ao militar que não se reengraja</span><br><span class="cat">Rubrica</span></div>
+      <div class="sigla-card"><span class="sigla">PTTC</span> — <span class="ext">Prestador de Tarefa por Tempo Certo — militar em situação especial de serviço</span><br><span class="cat">Situação</span></div>
+      <div class="sigla-card"><span class="sigla">SAT</span> — <span class="ext">Sistema de Acompanhamento de Talentos — base de dados cadastrais e funcionais dos militares</span><br><span class="cat">Sistema</span></div>
+      <div class="sigla-card"><span class="sigla">Set Fin</span> — <span class="ext">Seção Financeira da OM</span><br><span class="cat">Seção</span></div>
+      <div class="sigla-card"><span class="sigla">Set Pes</span> — <span class="ext">Seção de Pessoal da OM</span><br><span class="cat">Seção</span></div>
+      <div class="sigla-card"><span class="sigla">SIPPES</span> — <span class="ext">Sistema Integrado de Pagamento de Pessoal e Encargos Sociais do Exército — substituiu o SIAPPES</span><br><span class="cat">Sistema</span></div>
+      <div class="sigla-card"><span class="sigla">SSIP</span> — <span class="ext">Seção do Serviço de Inativos e Pensionistas</span><br><span class="cat">Seção</span></div>
+      <div class="sigla-card"><span class="sigla">SVP</span> — <span class="ext">Serviço de Verificação e Pagamento — seção responsável pela execução do pagamento de pessoal</span><br><span class="cat">Seção</span></div>
+      <div class="sigla-card"><span class="sigla">TCMS</span> — <span class="ext">Termo de Compromisso de Manutenção de Sigilo — assinado por todos os membros da equipe EPP (Anexo D — EB90-N-02.001)</span><br><span class="cat">Documento</span></div>
+      <div class="sigla-card"><span class="sigla">VB</span> — <span class="ext">Valor-Base — soldo de referência (Soldado EB) usado para calcular faixas da cota-parte do Auxílio Pré-Escolar</span><br><span class="cat">Referência</span></div>
+    </div>
+  </div>
+</div>
+</div><!-- /tab-siglas -->
+
+<!-- ─────────── ABA: EQUIPE EPP ──────────────────────────────────── -->
+<div class="tab-pane fade" id="tab-equipe" role="tabpanel">
+<div class="container-fluid px-4">
+  <div class="sec-title mt-3"><i class="fas fa-users me-2"></i>Composição e Restrições da Equipe EPP</div>
+  <div class="sec-body">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <p class="sec-sub">Composição da Equipe <small class="text-muted fw-normal">(Art. 5º, EB90-N-02.001)</small></p>
+        <table class="table tbl tbl-sm mb-3">
+          <thead><tr><th>Função</th><th>Requisito</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><strong>Chefe da Equipe</strong></td>
+              <td>Oficial. Na ausência de oficial disponível, Subtenente ou Sargento com Curso de Aperfeiçoamento de Sargentos (CAS) <em>(§3º)</em></td>
+            </tr>
+            <tr>
+              <td><strong>Auxiliares</strong></td>
+              <td>Mínimo de 2 (dois) membros</td>
+            </tr>
+            <tr>
+              <td><strong>Continuidade</strong></td>
+              <td>Pelo menos <strong>1/3 dos membros</strong> deve ter participado da equipe do ciclo imediatamente anterior <em>(§5º)</em></td>
+            </tr>
+            <tr>
+              <td><strong>Período de designação</strong></td>
+              <td>Por até <strong>3 meses consecutivos</strong> <em>(Art. 9º)</em></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="box-warn">
+          <h6><i class="fas fa-lock me-1"></i>TCMS — Obrigatório antes de iniciar <small>(Art. 6º)</small></h6>
+          <p class="small mb-0">Todos os membros devem assinar o <strong>Termo de Compromisso de Manutenção de Sigilo (Anexo D — EB90-N-02.001)</strong> antes de qualquer contato com documentos de pagamento dos selecionados. O TCMS é condição de validade do exame.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <p class="sec-sub">Impedimentos — Segregação de Funções <small class="text-muted fw-normal">(Art. 7º, EB90-N-02.001)</small></p>
+        <div class="box-danger mb-3">
+          <h6><i class="fas fa-ban me-1"></i>Não podem integrar a equipe EPP os militares que pertençam ou exerçam funções em:</h6>
+          <ul class="small mb-0">
+            <li>Seção de Pagamento da OM</li>
+            <li>Seção de Pessoal (Set Pes)</li>
+            <li>Seção Financeira (Set Fin)</li>
+            <li>Seção de Conformidade</li>
+            <li>Serviço de Verificação e Pagamento (SVP)</li>
+            <li>Assessoria Jurídica</li>
+            <li>Assessoria Técnico-Normativa</li>
+            <li>Função de auditor interno</li>
+          </ul>
+        </div>
+
+        <p class="sec-sub">Exame mínimo obrigatório — 2×/ano <small class="text-muted fw-normal">(Art. 16º)</small></p>
+        <div class="box-info">
+          <p class="small mb-0">O <strong>ARPP</strong>, o <strong>Enc Set Pes</strong>, o <strong>Ch SVP</strong>, o <strong>Coor Eq Exm Pg</strong> e todos os militares que trabalham nas seções de pagamento/SVP devem ter seus contracheques examinados <strong>pelo menos duas vezes por ano</strong>, independentemente da frequência normal do EPP.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /tab-equipe -->
+
+<!-- ─────────── ABA: FREQUÊNCIA ──────────────────────────────────── -->
+<div class="tab-pane fade" id="tab-frequencia" role="tabpanel">
+<div class="container-fluid px-4">
+  <div class="sec-title mt-3"><i class="fas fa-calendar-alt me-2"></i>Frequência do Exame e Prioridades</div>
+  <div class="sec-body">
+    <div class="row g-4">
+      <div class="col-md-6">
+        <p class="sec-sub">Frequência mínima por efetivo da OM <small class="text-muted fw-normal">(Art. 15º, EB90-N-02.001)</small></p>
+        <table class="table tbl mb-3">
+          <thead><tr><th>Efetivo da OM</th><th>% examinado / ano</th><th>Intervalo máx. entre exames</th></tr></thead>
+          <tbody>
+            <tr><td>Até 1.999 militares</td><td><strong style="color:var(--verde)">100%</strong></td><td>1 ano</td></tr>
+            <tr><td>2.000 a 4.999</td><td><strong style="color:var(--verde)">50%</strong></td><td>2 anos</td></tr>
+            <tr><td>5.000 a 14.999</td><td><strong style="color:var(--verde)">33,3%</strong></td><td>3 anos</td></tr>
+            <tr><td>15.000 ou mais</td><td><strong style="color:var(--verde)">25%</strong></td><td>4 anos</td></tr>
+          </tbody>
+        </table>
+        <div class="box-warn">
+          <h6><i class="fas fa-star me-1"></i>Exame 2×/ano — Obrigatório <small>(Art. 16º)</small></h6>
+          <p class="small mb-0">Independentemente do tamanho da OM, o <strong>ARPP</strong>, <strong>Enc Set Pes</strong>, <strong>Ch SVP</strong>, <strong>Coor Eq Exm Pg</strong> e todos que trabalham em seções de pagamento/SVP devem ser examinados <strong>pelo menos duas vezes por ano</strong>.</p>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <p class="sec-sub">Situações com exame prioritário e prazo especial <small class="text-muted fw-normal">(Art. 14º)</small></p>
+        <table class="table tbl mb-3">
+          <thead><tr><th>Situação</th><th>Prazo máximo para examinar</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Recém-implantados no SIPPES, reincorporados ao serviço ativo, primeiros pagamentos de pensionistas, mudança de situação funcional (transferência de inativo para pensionista, etc.)</td>
+              <td><strong style="color:var(--verde)">3 meses</strong></td>
+            </tr>
+            <tr>
+              <td>Militares recém-chegados à OM ou ao SVP</td>
+              <td><strong style="color:var(--verde)">6 meses</strong></td>
+            </tr>
+            <tr>
+              <td>Concessões de pensão graciosa ou indenizatória</td>
+              <td><strong style="color:var(--verde)">1 ano</strong></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <p class="sec-sub">Verificação de consignações <small class="text-muted fw-normal">(Art. 11º)</small></p>
+        <div class="box-info">
+          <p class="small mb-0">A equipe EPP deve obter os <strong>relatórios de exclusão do sistema de consignações</strong> e verificar se todas as exclusões foram devidamente publicadas em BI. Qualquer consignação ativa deve ter autorização do militar correspondente arquivada na OM.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div><!-- /tab-frequencia -->
+
+<!-- ─────────── ABA: RELATÓRIO FINAL ─────────────────────── -->
+<div class="tab-pane fade" id="tab-relatorio" role="tabpanel">
+<div class="container-fluid px-4">
+
+  <!-- ESTRUTURA E TRÂMITE -->
+  <div id="relatorio" class="mt-3">
+    <div class="sec-title"><i class="fas fa-file-signature me-2"></i>Relatório EPP — Estrutura e Trâmite</div>
+    <div class="sec-body">
+      <p>O <strong>Relatório EPP (Anexo B — EB90-N-02.001)</strong> deve ser apresentado ao ARPP até o dia 25 do mês do exame e publicado em BI até o último dia útil. Contém duas seções:</p>
+      <div class="row g-3 mb-3">
+        <div class="col-md-6">
+          <div class="cmp-card">
+            <h6><i class="fas fa-chart-bar me-2"></i>Seção (a) — Exame de Pagamento</h6>
+            <p class="small mb-0">Resultado da <strong>Etapa 1</strong>. Confronto entre lançamentos do FAP e os BI/aditamentos. Registra conformidades e divergências.</p>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="cmp-card">
+            <h6><i class="fas fa-search me-2"></i>Seção (b) — Exame de Contracheque</h6>
+            <p class="small mb-0">Resultado da <strong>Etapa 2</strong>. Análise de cada rubrica por militar selecionado. Registra conformidades e irregularidades identificadas.</p>
+          </div>
+        </div>
+      </div>
+      <div class="box-info">
+        <h6><i class="fas fa-stamp me-1"></i>Despacho do ARPP</h6>
+        <p class="small mb-0">Após receber o Relatório (Passo 9), o ARPP lança seu despacho com as determinações de correção, responsáveis e prazos. É publicado em BI junto com o Relatório (Passo 10). No ciclo seguinte, o cumprimento é verificado (Passo 7) e publicado (Passo 15).</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title mt-3"><i class="fas fa-file-signature me-2"></i>Relatório EPP — Modelo (Anexo B, EB90-N-02.001)</div>
+
+  <!-- ══ BOTÃO COPIAR ══ -->
+  <div style="padding:0.6rem 0 1rem; display:flex; align-items:flex-start; gap:1.2rem; flex-wrap:wrap;">
+    <div style="display:flex; flex-direction:column; align-items:flex-start; gap:.4rem;">
+      <button id="btn-copiar-rel" onclick="copiarRelatorioEPP()" style="background:#c0152a; color:#fff; border:none; border-radius:7px; padding:.65rem 1.6rem; font-size:1rem; font-weight:700; cursor:pointer; display:inline-flex; align-items:center; gap:.55rem; box-shadow:0 3px 10px rgba(192,21,42,.45); transition:background .2s; letter-spacing:.02em;">
+        <i class="fas fa-copy"></i> Copiar conteúdo para Word
+      </button>
+      <span id="rel-copy-msg" style="display:none; font-size:.88rem; color:#2e7d32; font-weight:600;">
+        <i class="fas fa-check-circle me-1"></i>Copiado! Cole no Word com Ctrl+V.
+      </span>
+    </div>
+    <div style="background:#fff8e1; border-left:4px solid #f9a825; border-radius:5px; padding:.6rem .9rem; font-size:.84rem; color:#5a3e00; max-width:560px; line-height:1.55;">
+      <strong><i class="fas fa-exclamation-triangle me-1"></i>Atenção após colar no Word:</strong><br>
+      O conteúdo é copiado com a estrutura e formatação básica, mas <strong>ajustes manuais ainda serão necessários</strong> para que o documento fique idêntico ao modelo oficial do <em>Anexo B — EB90-N-02.001</em>, tais como: margens da página, espaçamento entre parágrafos, numeração de itens, fonte e tamanho do texto conforme padrão EB.
+    </div>
+  </div>
+
+  <!-- ══ DOCUMENTO ANOTADO ══ -->
+  <div style="padding-bottom:1rem">
+  <div class="rel-wrap">
+
+  <!-- ════ COLUNA ESQUERDA — DOCUMENTO ════ -->
+  <div class="rel-doc">
+
+
+<!-- ══ ROW 1: Cabeçalho ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="background:#1a4a2e; color:#fff; text-align:center; border-bottom:3px solid var(--dourado); padding:.8rem 1.5rem; border-left:2px solid #444; border-right:2px solid #444; border-top:2px solid #444;">
+    <div style="font-size:.68rem; letter-spacing:2px; opacity:.85">EXÉRCITO BRASILEIRO</div>
+    <div style="font-size:.98rem; font-weight:700; margin:.15rem 0">RELATÓRIO DO EXAME DE PAGAMENTO DE PESSOAL</div>
+    <div style="font-size:.68rem; opacity:.85">Anexo B — EB90-N-02.001 (2ª Edição, 2024)</div>
+  </div>
+  <div class="ann-slot"></div>
+</div>
+
+<!-- ══ ROW 2: Identificação da OM ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="padding:0; border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd;">
+    <table style="width:100%; border-collapse:collapse; font-size:.85rem;">
+      <tr>
+        <td style="border:1px solid #888; padding:.4rem .8rem; width:50%"><strong>OM:</strong> <span style="color:#800">______________________________________</span></td>
+        <td style="border:1px solid #888; padding:.4rem .8rem"><strong>SIGLA:</strong> <span style="color:#800">_______________</span></td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #888; padding:.4rem .8rem"><strong>CODOM:</strong> <span style="color:#800">_________________________________</span></td>
+        <td style="border:1px solid #888; padding:.4rem .8rem"><strong>COD UG:</strong> <span style="color:#800">_______________</span></td>
+      </tr>
+      <tr>
+        <td style="border:1px solid #888; padding:.4rem .8rem"><strong>Exercício Financeiro:</strong> <span style="color:#800">____________________</span></td>
+        <td style="border:1px solid #888; padding:.4rem .8rem"><strong>Mês de referência do pagamento:</strong> <span style="color:#800">_______</span></td>
+      </tr>
+    </table>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">
+      <span class="ann-num">①</span><strong>Obs. — Pagamento Centralizado (campos OM/SIGLA/CODOM/CODUG)</strong><br>
+      Em caso de pagamento centralizado, esses campos deverão ser preenchidos com os dados da OM vinculada. Se uma OM centralizadora possui 20 OMV, o Chefe da Equipe confeccionará 21 relatórios (um da centralizadora + um por OMV).
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROW 3: Item 1 — Equipe ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd;">
+    <p style="margin:.3rem 0"><strong>1.</strong> Equipe designada, conforme BI n° <span style="color:#800">___</span>, de <span style="color:#800">___</span> de <span style="color:#800">_______________</span> de <span style="color:#800">______</span>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Chefe: <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Auxiliar(es): <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.<br>
+    &nbsp;&nbsp;&nbsp;&nbsp;Militar(es) Reconduzido(s): <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>.<br>
+    <span style="font-size:.8rem; font-style:italic; margin-left:4rem">(Citar o integrante que participou da equipe anterior)</span></p>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">
+      <span class="ann-num">②</span><strong>Obs. — BI em Pagamento Centralizado</strong><br>
+      Em caso de pagamento centralizado, o BI será o da Autoridade responsável pela designação da equipe, conforme Art. 5º desta Portaria.
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROW 4: Item 2 — Exame realizado ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd;">
+    <p style="margin:.3rem 0 .3rem"><strong>2.</strong> Foi realizado o exame de contracheques dos militares designados no BI n° <span style="color:#800">___</span>, de <span style="color:#800">___</span> de <span style="color:#800">_______________</span> de <span style="color:#800">______</span>, sendo:</p>
+    <div style="padding-left:1.5rem">
+      <p style="margin:.12rem 0">a. <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> militares da ativa; <span style="font-size:.75rem; color:#555">(quantidade)</span></p>
+      <p style="margin:.12rem 0">b. <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> servidores civis em exercício; <span style="font-size:.75rem; color:#555">(quantidade)</span></p>
+      <p style="margin:.12rem 0">c. <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> militares veteranos; <span style="font-size:.75rem; color:#555">(quantidade)</span></p>
+      <p style="margin:.12rem 0">d. <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> servidores civis aposentados; <span style="font-size:.75rem; color:#555">(quantidade)</span></p>
+      <p style="margin:.12rem 0">e. <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> pensionistas militares; <span style="font-size:.75rem; color:#555">(quantidade)</span></p>
+      <p style="margin:.12rem 0">f. <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> pensionistas civis. <span style="font-size:.75rem; color:#555">(quantidade)</span></p>
+      <p style="margin:.4rem 0">g. O efetivo total da OM é de <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="font-size:.75rem; color:#555">(qtd)</span>, o efetivo examinado no mês foi de <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> <span style="font-size:.75rem; color:#555">(qtd)</span>,<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;logo o percentual examinado no mês foi de <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;</span>%.</p>
+    </div>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">
+      <span class="ann-num">③</span><strong>Obs. — Pagamento Centralizado (quantidades)</strong><br>
+      Em caso de pagamento centralizado, a quantidade a ser preenchida é referente à cada OMV.
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROW 5: Item 3.a.1 — Conferência dos Relatórios ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd;">
+    <p style="margin:.3rem 0 .3rem"><strong>3.</strong> A equipe constatou nos exames realizados o que se segue:</p>
+    <div style="padding-left:1.2rem">
+      <p style="margin:.3rem 0"><strong>a. Exame de pagamento:</strong></p>
+      <div style="padding-left:1.2rem">
+        <p style="margin:.3rem 0"><strong>1.</strong> Da Conferência dos Relatórios de Lançamentos de Pagamento e Consignações, sejam de alteração, implantação, exclusão ou Exercícios Anteriores com os BI e/ou Aditamentos de pagamento, foram encontradas as seguintes alterações:</p>
+        <p style="color:#800; margin:.3rem 0 0; font-size:.85rem"><span style="text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card ann-ex">
+      <span class="ann-num" style="background:#2d5a8c; color:#fff">④</span><strong>Exemplos — Item 3.a.1 (Conferência dos Relatórios)</strong><br><br>
+      <em>Ex. 1: consta no FAP de Militar da Ativa, da 1ª Corrida de Pagamento, do mês ____, um saque de auxílio-alimentação, na rubrica ____, ao 3º Sgt Fulano, Idt ____, Prec CP ______, no valor de R$ ____, que não consta no Aditamento e/ou BI n° ____, de ___ de _______ de ____.</em><br><br>
+      <em>Ex. 2: consta no relatório de pagamento do SIPPES, da 2ª Corrida de Pagamento, do mês ____, um saque de Auxílio-Fardamento, na rubrica ____, ao Maj Beltrano, Idt ____, Prec CP ______, no valor de R$ 111.088,00, sendo que no Aditamento/BI n° ___, de ___ de _______ de ____, consta o valor de R$ 11.088,00 (valores diferentes).</em><br><br>
+      <em>Ex. 3: consta no FAP de Militar Veterano, da 1ª Corrida, do mês ____, um saque de Auxílio Alimentação, referente ao mês____ e ano____, ao 2º Sgt Fulano, no valor de R$ ____, equivalente à 15 dias, sendo que no BI n° ____, constam apenas 10 dias.</em><br><br>
+      <em>Ex. 4: consta no FAP de Pensionista Militar, da 2ª Corrida de Pagamento, do mês ____, um lançamento para isenção de IR (mudança para cálculo 6), referente à pensionista Beltrana, que não consta no Aditamento e/ou BI n° ___.</em><br><br>
+      <em>Ex. 5: consta no sistema SIAPE do mês ____, um saque de Adicional Raio-X, ao Servidor Civil Fulano, no valor de R$ ____, que não consta no Aditamento e/ou BI n° ____.</em>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROW 6: Item 3.a.2 — Confrontação do Efetivo ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd;">
+    <div style="padding-left:2.4rem">
+      <p style="margin:.3rem 0 .5rem"><strong>2.</strong> Da confrontação do Relatório Beneficiários da Folha de Pagamento (efetivo pago) com a relação do efetivo existente na OM, foram encontradas as seguintes alterações:</p>
+      <div style="overflow-x:auto">
+      <table style="width:100%; border-collapse:collapse; font-size:.78rem; text-align:center;">
+        <thead>
+          <tr style="background:#dde4ef">
+            <th style="border:1px solid #888; padding:.3rem .4rem; text-align:left" rowspan="2">UNIVERSO ANALISADO (P/G)</th>
+            <th style="border:1px solid #888; padding:.3rem .4rem" colspan="2">RELAÇÃO DO EFETIVO<br>EXISTENTE NA OM</th>
+            <th style="border:1px solid #888; padding:.3rem .4rem" colspan="2">RELATÓRIO BENEFICIÁRIOS<br>DA FOLHA DE PAGAMENTO</th>
+            <th style="border:1px solid #888; padding:.3rem .4rem" rowspan="2">DIVERGÊNCIAS</th>
+          </tr>
+          <tr style="background:#dde4ef">
+            <th style="border:1px solid #888; padding:.2rem .4rem">ATIVA</th>
+            <th style="border:1px solid #888; padding:.2rem .4rem">VETERANO</th>
+            <th style="border:1px solid #888; padding:.2rem .4rem">ATIVA</th>
+            <th style="border:1px solid #888; padding:.2rem .4rem">VETERANO</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Gen Ex</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Gen Div</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Gen Bda</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Cel</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Ten Cel</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">(1),(2),(3)</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Maj</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">(4)</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Cap</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">(5)</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">1º Ten</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">(6),(7),(16)</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">2º Ten</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Asp</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">(8),(9),(10)</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">S Ten</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">(11)</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Cad</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Al</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">1º Sgt</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">2º Sgt</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">3º Sgt</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Cb Eng</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Cb EV</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Sd 1ª Cl</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Sd Eng</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Sd n Eng</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Taif Mor</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Taif 1ª Cl</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Taif 2ª Cl</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Servidor Civil em exercício</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Servidor Civil Aposentado</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Pensionista civil</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="background:#f8f8f8"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Pensionista militar</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+          <tr style="font-weight:700; background:#e8ede9"><td style="border:1px solid #888; padding:.25rem .4rem; text-align:left">Total</td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem"></td><td style="border:1px solid #888; padding:.25rem .4rem">-</td></tr>
+        </tbody>
+      </table>
+      </div>
+      <div style="font-size:.85rem; line-height:2.0; margin-top:.6rem">
+        <strong>Divergências:</strong><br>
+        (1) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (2) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (3) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (4) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (5) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (6) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (7) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (8) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (9) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (10) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span><br>
+        (11) <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+      </div>
+    </div>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card ann-ex">
+      <span class="ann-num" style="background:#2d5a8c; color:#fff">⑤</span><strong>Exemplo — Como preencher Divergências</strong><br><br>
+      <em>(1) o Ten Cel Brás, Idt _____, Prec CP ____, consta no Relatório Beneficiário da Folha de Pagamento e não consta na relação do efetivo existente. Os valores que recebeu se referem ao ajuste de contas de indenização de férias. O referido militar foi transferido para a reserva remunerada.</em>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROW 7: Item 3.b — Exame de Contracheque ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd;">
+    <div style="padding-left:1.2rem">
+      <p style="margin:.3rem 0"><strong>b. Exame de Contracheque:</strong></p>
+      <div style="padding-left:1.2rem">
+        <p style="margin:.3rem 0">No confronto realizado entre a documentação coletada e os contracheques dos militares, servidores civis e pensionistas examinados foram encontradas as seguintes alterações:</p>
+        <p style="color:#800; font-size:.85rem"><span style="text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+      </div>
+    </div>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card ann-ex">
+      <span class="ann-num" style="background:#2d5a8c; color:#fff">⑥</span><strong>Exemplos — Item 3.b (Exame de Contracheque)</strong><br><br>
+      <em>Ex. 1: o Cap QAO Fulano recebe 10% a título de Adicional Permanência. Entretanto, de acordo com as suas alterações e ficha do SICAPEx, este faz jus a 5%.</em><br><br>
+      <em>Ex. 2: o Cel Sicrano recebe 20% a título de compensação orgânica. Entretanto, de acordo com as suas alterações e plano de provas, este faz jus a 18% de cotas homologadas no Posto de Capitão.</em><br><br>
+      <em>Ex. 3: O Cel R/1 Beltrano permanece recebendo o Adicional PTTC. O militar foi exonerado em mês____ e ano_____, não fazendo juz ao adicional a contar de mês___ e ano_____.</em><br><br>
+      <em>Ex. 4: A pensionista militar Maria está contribuindo com 1,5% de pensão militar. De acordo com os dados cadastrais, a referida pensionista é filha, pensionista vitalícia e deve contribuir com 3%, a contar de sua implantação no mês___ e ano____.</em><br><br>
+      <em>Ex. 5: O servidor Fulano não encontra-se recebendo o abono de permanência a que faz jus, conforme verificado em seus dados cadastrais.</em>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROW 8: Assinaturas + Atestado ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd; text-align:center; padding:1rem 1.5rem;">
+    <p style="margin:.3rem 0">Quartel em <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> - <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;</span>, <span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;</span>/<span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;</span>/<span style="color:#800; text-decoration:underline">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span></p>
+    <p style="font-size:.75rem; color:#555; margin:.1rem 0">(Cidade) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; (UF) &nbsp;&nbsp; (dia) (mês) (ano)</p>
+    <div class="row mt-3">
+      <div class="col-md-5" style="border-top:1px solid #555; padding-top:.35rem; margin:0 auto 1.2rem; font-size:.85rem">Nome completo e posto<br>Chefe da equipe</div>
+    </div>
+    <div class="row">
+      <div class="col-md-5" style="border-top:1px solid #555; padding-top:.35rem; margin:0 auto; font-size:.85rem">Nome completo e posto<br>Auxiliar da equipe</div>
+    </div>
+    <div style="margin-top:1.2rem; text-align:left; border-top:2px solid #888; padding-top:.6rem">
+      <p style="font-size:.88rem; margin:.2rem 0"><strong>Atestado do Encarregado do Setor de Pessoal / Coordenador da Equipe de Exame de Pagamento / Ajudante Geral:</strong></p>
+      <p style="margin:.5rem 0 1rem">Atesto que os membros das equipes foram orientados, de acordo com a legislação vigente.</p>
+      <div style="text-align:center">
+        <div style="display:inline-block; border-top:1px solid #555; padding-top:.35rem; font-size:.85rem; min-width:260px">Nome completo e Posto</div>
+      </div>
+      <p style="text-align:center; font-size:.72rem; color:#555; margin:.2rem 0">Encarregado do Setor de Pessoal / Coordenador da Equipe de Exame de Pagamento / Ajudante Geral</p>
+    </div>
+  </div>
+  <div class="ann-slot"></div>
+</div>
+
+<!-- ══ ROW 9: Despacho ODPP — itens 1-2 ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:3px solid var(--dourado); background:#fdf8ee;">
+    <p style="font-size:.9rem; margin:.2rem 0 .6rem"><strong>Despacho do ODPP:</strong></p>
+    <ol style="font-size:.88rem; line-height:1.8; margin-left:.5rem; padding-left:1rem">
+      <li>Aprovo o presente Relatório.</li>
+      <li>Medidas para a correção das alterações citadas no item n° 3.</li>
+    </ol>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">
+      <span class="ann-num">⑦</span><strong>Obs. — Como redigir as medidas corretivas (item 2)</strong><br>
+      Discriminar de forma clara e individual as medidas para a correção de cada falha ou a apuração de irregularidades. As medidas deverão responder: <em>por quem? quando? o que? por que será feito?</em>
+    </div>
+    <div class="ann-card ann-ex">
+      <span class="ann-num" style="background:#2d5a8c; color:#fff">⑧</span><strong>Exemplos — Medidas corretivas</strong><br><br>
+      <em>Ex. 1: o Chefe do SPP deverá sacar no pagamento do mês "M" o adicional de férias do Cap Fulano, por ter gozado férias relativas ao ano "Y" e não ter recebido o referido adicional.</em><br><br>
+      <em>Ex. 2: O Cmt do 444° BIMtz deverá remeter ao Cmt Base Adm XXXX, até 15 de Maio de 2023, a publicação em BI/aditamento do saque do auxílio-natalidade referente ao Maj José, tendo em vista que o valor constante no BI n°__ encontra-se divergente.</em><br><br>
+      <em>Ex. 3: O Ch SPP deverá excluir o Adicional PTTC do Cel R/1 Beltrano na próxima corrida de pagamento disponível, tendo em vista que o militar foi exonerado da nomeação de PTTC no mês____ e ano_____, conforme BI n°__, de ___, de ___, de ________.</em><br><br>
+      <em>Ex. 4: O Ch da SVP deverá solicitar de imediato a abertura de procedimento para apuração de irregularidade administrativa (Port. C EX Nº 1845/2022), para que ocorra a devida apuração, visando à devolução dos valores recebidos a maior a título de Adicional PTTC pelo Cel R/1 Beltrano.</em><br><br>
+      <em>Ex. 5: o Chefe do SPP deverá realizar o desconto no pagamento do mês "M" do Adicional Raio-X do Servidor Civil Fulano, no valor de R$ ____, tendo em vista que o referido saque não consta no Aditamento e/ou BI n°__.</em><br><br>
+      <em>Ex. 6: o Chefe do SPP deverá sacar no pagamento do mês "M" o abono de permanência do Servidor Civil da ativa João, tendo em vista o mesmo não ter recebido o referido adicional que faz jus.</em>
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROW 10: Despacho itens 3-5 ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd; background:#fdf8ee;">
+    <ol start="3" style="font-size:.88rem; line-height:1.8; margin-left:.5rem; padding-left:1rem">
+      <li>Publique-se este Relatório com o despacho.</li>
+      <li>Arquive-se o Relatório com o Despacho no Setor de Suporte Documental e uma cópia no Setor de Pessoal da OM/Seção de Coordenação da Equipe de Exame de Pagamento.</li>
+      <li>Remeta-se o(s) Relatório(s) com o Despacho e o(s) Mapa(s) de Controle do Efetivo ao CGCFEx de apoio.</li>
+    </ol>
+  </div>
+  <div class="ann-slot">
+    <div class="ann-card">
+      <span class="ann-num">⑨</span><strong>Obs. — Envio ao CGCFEx (item 5)</strong><br>
+      O Relatório de Exame de Pagamento de Pessoal com Despacho do OD e o Mapa de Controle de Efetivo <strong><u>devem</u></strong> ser enviados em <strong>PDF pesquisável</strong>, preferencialmente com assinatura digital, não havendo a necessidade de digitalizá-lo. Basta informar, no corpo do DIEx de remessa, que o conteúdo condiz com os originais assinados e arquivados na OM.
+    </div>
+  </div>
+</div>
+
+<!-- ══ ROW 11: Despacho item 6 ══ -->
+<div class="doc-row">
+  <div class="doc-cell" style="border-left:2px solid #444; border-right:2px solid #444; border-top:1px solid #ddd; border-bottom:2px solid #444; background:#fdf8ee;">
+    <ol start="6" style="font-size:.88rem; line-height:1.8; margin-left:.5rem; padding-left:1rem; margin-bottom:0">
+      <li>Remeta-se o Relatório com o Despacho aos Cmt OMV (se for o caso).</li>
+    </ol>
+  </div>
+  <div class="ann-slot"></div>
+</div>
+
+  </div><!-- /rel-doc -->
+
+  <!-- ════ COLUNA DIREITA — ANOTAÇÕES (vazia, slots já inseridos nas rows) ════ -->
+  <div class="rel-ann"></div>
+
+  </div><!-- /rel-wrap -->
+  </div><!-- /overflow-x:auto -->
+
+</div>
+</div><!-- /tab-relatorio -->
+
+</div><!-- /tab-content -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  /* Zoom do fluxograma */
+  let fcS = 1.0;
+  function fcZ(d) {
+    fcS = Math.min(2.0, Math.max(0.35, +(fcS + d).toFixed(2)));
+    document.getElementById('fcBoard').style.zoom = fcS;
+    document.getElementById('fcPct').textContent = Math.round(fcS * 100) + '%';
+  }
+  function fcReset() {
+    fcS = 1.0;
+    document.getElementById('fcBoard').style.zoom = 1;
+    document.getElementById('fcPct').textContent = '100%';
+  }
+
+  /* Scroll drag-to-pan no fluxograma */
+  (function() {
+    const el = document.getElementById('fcScroll');
+    let isDown = false, startX, startY, scrollL, scrollT;
+    el.addEventListener('mousedown', e => {
+      isDown = true; el.style.cursor = 'grabbing';
+      startX = e.pageX - el.offsetLeft; startY = e.pageY - el.offsetTop;
+      scrollL = el.scrollLeft; scrollT = el.scrollTop;
+    });
+    el.addEventListener('mouseleave', () => { isDown = false; el.style.cursor = 'grab'; });
+    el.addEventListener('mouseup',    () => { isDown = false; el.style.cursor = 'grab'; });
+    el.addEventListener('mousemove',  e => {
+      if (!isDown) return; e.preventDefault();
+      el.scrollLeft = scrollL - (e.pageX - el.offsetLeft - startX);
+      el.scrollTop  = scrollT - (e.pageY - el.offsetTop  - startY);
+    });
+  })();
+
+  /* ── CHECKLIST DE RUBRICAS ── */
+  (function() {
+    const tbl = document.getElementById('tbl-rubricas');
+    if (!tbl) return;
+    tbl.querySelectorAll('tbody tr:not(.row-group)').forEach(function(tr) {
+      const td = tr.querySelector('td:first-child');
+      if (!td) return;
+      const strong = td.querySelector('strong');
+      if (!strong) return;
+      const chk = document.createElement('input');
+      chk.type = 'checkbox';
+      chk.className = 'rub-chk';
+      const badge = document.createElement('span');
+      badge.className = 'rub-done-badge';
+      badge.textContent = '✓ Verificado';
+      const wrap = document.createElement('span');
+      wrap.className = 'rub-chk-wrap';
+      td.insertBefore(wrap, strong);
+      wrap.appendChild(chk);
+      wrap.appendChild(strong);
+      wrap.appendChild(badge);
+      chk.addEventListener('change', function() {
+        tr.classList.toggle('rub-done', chk.checked);
+      });
+    });
+  })();
+
+  // ── SIGLAS: categorias, ordenação e filtro ──────────────────────────
+  (function() {
+    var catMap = {
+      'Rubrica':'cat-rubrica','Documento':'cat-documento','Função':'cat-funcao',
+      'Posto/Função':'cat-funcao','Órgão':'cat-orgao','Organização':'cat-organizacao',
+      'Sistema':'cat-sistema','Benefício':'cat-beneficio','Atividade':'cat-atividade',
+      'Qualificação':'cat-qualificacao','Seção':'cat-secao','Situação':'cat-situacao',
+      'Referência':'cat-referencia'
+    };
+    var _cards = null;
+    var _sort = 'az';
+    var _filter = '';
+
+    function initCards() {
+      if (_cards) return;
+      _cards = [];
+      var cats = [];
+      document.querySelectorAll('#sigla-grid .sigla-card').forEach(function(card) {
+        var catEl = card.querySelector('.cat');
+        if (!catEl) return;
+        var catTxt = catEl.textContent.trim();
+        var cls = catMap[catTxt];
+        if (cls) card.classList.add(cls);
+        _cards.push({ sigla: card.querySelector('.sigla').textContent.trim(), cat: catTxt, el: card });
+        if (cats.indexOf(catTxt) < 0) cats.push(catTxt);
+      });
+      // popula o select com categorias únicas em ordem alfabética
+      cats.sort(function(a,b){ return a.localeCompare(b,'pt'); });
+      var sel = document.getElementById('filtro-cat');
+      cats.forEach(function(c) {
+        var opt = document.createElement('option');
+        opt.value = c; opt.textContent = c;
+        sel.appendChild(opt);
+      });
+    }
+
+    function render() {
+      var grid = document.getElementById('sigla-grid');
+      // remove separadores anteriores
+      grid.querySelectorAll('.sigla-cat-sep').forEach(function(s){ s.remove(); });
+      // oculta todos
+      _cards.forEach(function(c){ c.el.style.display = 'none'; });
+      // aplica filtro
+      var visible = _filter
+        ? _cards.filter(function(c){ return c.cat === _filter; })
+        : _cards.slice();
+      // ordena
+      if (_sort === 'az') {
+        visible.sort(function(a,b){ return a.sigla.localeCompare(b.sigla,'pt'); });
+      } else {
+        visible.sort(function(a,b){
+          var d = a.cat.localeCompare(b.cat,'pt');
+          return d !== 0 ? d : a.sigla.localeCompare(b.sigla,'pt');
+        });
+      }
+      // re-insere com separadores de categoria se necessário
+      var lastCat = null;
+      visible.forEach(function(c) {
+        if (_sort === 'cat' && c.cat !== lastCat) {
+          var sep = document.createElement('div');
+          sep.className = 'sigla-cat-sep';
+          sep.textContent = c.cat;
+          grid.appendChild(sep);
+          lastCat = c.cat;
+        }
+        c.el.style.display = '';
+        grid.appendChild(c.el);
+      });
+    }
+
+    window.siglaSort = function(mode) {
+      _sort = mode;
+      document.getElementById('sort-az').classList.toggle('active', mode === 'az');
+      document.getElementById('sort-cat').classList.toggle('active', mode === 'cat');
+      render();
+    };
+    window.siglaFilter = function(cat) {
+      _filter = cat;
+      render();
+    };
+
+    document.addEventListener('DOMContentLoaded', function() { initCards(); render(); });
+  })();
+
+  // ── BASE LEGAL: categorias, ordenação e filtro ──────────────────────
+  (function() {
+    var catMap = {
+      'Processo EPP':  'lcat-epp',
+      'PHPM / Pensão': 'lcat-pensao',
+      'Benefício':     'lcat-beneficio',
+      'Remuneração':   'lcat-remuneracao',
+      'Estatuto':      'lcat-estatuto'
+    };
+    var _cards = null;
+    var _sort   = 'imp';
+    var _filter = '';
+
+    function initCards() {
+      if (_cards) return;
+      _cards = [];
+      document.querySelectorAll('#legal-grid .legal-card').forEach(function(card) {
+        var catTxt = card.getAttribute('data-cat') || '';
+        var cls    = catMap[catTxt];
+        if (cls) card.classList.add(cls);
+        _cards.push({
+          norma: card.getAttribute('data-norma') || '',
+          cat:   catTxt,
+          ordem: parseInt(card.getAttribute('data-ordem') || '99', 10),
+          el:    card
+        });
+      });
+    }
+
+    function render() {
+      var grid = document.getElementById('legal-grid');
+      grid.querySelectorAll('.legal-cat-sep').forEach(function(s){ s.remove(); });
+      _cards.forEach(function(c){ c.el.style.display = 'none'; });
+      var visible = _filter
+        ? _cards.filter(function(c){ return c.cat === _filter; })
+        : _cards.slice();
+      if (_sort === 'imp') {
+        visible.sort(function(a,b){ return a.ordem - b.ordem; });
+      } else if (_sort === 'az') {
+        visible.sort(function(a,b){ return a.norma.localeCompare(b.norma,'pt'); });
+      } else {
+        visible.sort(function(a,b){
+          var d = a.cat.localeCompare(b.cat,'pt');
+          return d !== 0 ? d : a.ordem - b.ordem;
+        });
+      }
+      var lastCat = null;
+      visible.forEach(function(c) {
+        if (_sort === 'cat' && c.cat !== lastCat) {
+          var sep = document.createElement('div');
+          sep.className = 'legal-cat-sep';
+          sep.textContent = c.cat;
+          grid.appendChild(sep);
+          lastCat = c.cat;
+        }
+        c.el.style.display = '';
+        grid.appendChild(c.el);
+      });
+    }
+
+    window.legalSort = function(mode) {
+      _sort = mode;
+      document.getElementById('lsort-imp').classList.toggle('active', mode === 'imp');
+      document.getElementById('lsort-az').classList.toggle('active',  mode === 'az');
+      document.getElementById('lsort-cat').classList.toggle('active', mode === 'cat');
+      render();
+    };
+    window.legalFilter = function(cat) {
+      _filter = cat;
+      render();
+    };
+
+    document.addEventListener('DOMContentLoaded', function() { initCards(); render(); });
+  })();
+
+  // ── PERSISTÊNCIA DE ABA VIA localStorage ────────────────────────────
+  (function() {
+    var KEY = 'epp_aba_ativa';
+    document.addEventListener('DOMContentLoaded', function() {
+      // restaura aba salva (se existir)
+      var saved = localStorage.getItem(KEY);
+      if (saved) {
+        var btn = document.querySelector('.nav-link[data-bs-target="' + saved + '"]');
+        if (btn) {
+          // remove active atual
+          document.querySelectorAll('.hdr-tabs .nav-link').forEach(function(b){ b.classList.remove('active'); });
+          document.querySelectorAll('.tab-pane').forEach(function(p){ p.classList.remove('show','active'); });
+          btn.classList.add('active');
+          var pane = document.querySelector(saved);
+          if (pane) pane.classList.add('show','active');
+        }
+      }
+      // salva sempre que trocar de aba
+      document.querySelectorAll('.hdr-tabs .nav-link').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var target = this.getAttribute('data-bs-target');
+          if (target) localStorage.setItem(KEY, target);
+        });
+      });
+    });
+  })();
+
+  function rubReset() {
+    document.querySelectorAll('.rub-chk').forEach(function(c) {
+      c.checked = false;
+      c.closest('tr').classList.remove('rub-done');
+    });
+  }
+
+  async function copiarRelatorioEPP() {
+    var btn = document.getElementById('btn-copiar-rel');
+    var msg = document.getElementById('rel-copy-msg');
+    var cells = document.querySelectorAll('#tab-relatorio .doc-cell');
+
+    // Monta HTML limpo juntando o conteúdo de cada seção do documento
+    var corpo = '';
+    cells.forEach(function(cell) {
+      var clone = cell.cloneNode(true);
+      // Remove atributos de estilo que não fazem sentido no Word (overflow, etc.)
+      clone.querySelectorAll('[style*="overflow"]').forEach(function(el) {
+        el.style.overflow = '';
+      });
+      corpo += clone.outerHTML;
+    });
+
+    var html = '<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body>' +
+      '<div style="font-family:\'Times New Roman\',serif;font-size:12pt;color:#000;width:19cm;margin:0 auto;">' +
+      corpo +
+      '</div></body></html>';
+
+    try {
+      if (window.ClipboardItem && navigator.clipboard && navigator.clipboard.write) {
+        var blob = new Blob([html], { type: 'text/html' });
+        await navigator.clipboard.write([new ClipboardItem({ 'text/html': blob })]);
+      } else {
+        // Fallback: seleciona o conteúdo visualmente e usa execCommand
+        var tmp = document.createElement('div');
+        tmp.innerHTML = html;
+        tmp.style.cssText = 'position:fixed;top:-9999px;left:-9999px;opacity:0;';
+        document.body.appendChild(tmp);
+        var range = document.createRange();
+        range.selectNodeContents(tmp);
+        var sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+        document.execCommand('copy');
+        sel.removeAllRanges();
+        document.body.removeChild(tmp);
+      }
+      // Feedback visual
+      btn.style.background = '#2e7d32';
+      btn.innerHTML = '<i class="fas fa-check"></i> Copiado!';
+      msg.style.display = 'inline';
+      setTimeout(function() {
+        btn.style.background = 'var(--verde)';
+        btn.innerHTML = '<i class="fas fa-copy"></i> Copiar conteúdo para Word';
+        msg.style.display = 'none';
+      }, 3500);
+    } catch(e) {
+      alert('Não foi possível copiar automaticamente.\nSelecione o documento manualmente (Ctrl+A na área do relatório) e use Ctrl+C.');
+    }
+  }
+</script>
+</body>
+</html>
